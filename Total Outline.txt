@@ -1,0 +1,75 @@
+Outline of classes we need to write:
+
+1. Question Randomizer. I have no idea how many levels we can put in this, but we need a randomized set of questions.
+
+The way I propose to handle this is by creating a set of questions for each difficulty level:
+(100 questions for the easy part, 100 for the moderate part, and 100 for the hard part)
+Those numbers are tentative, I have no idea how many we need.
+
+Furthermore, this game won't have a difficulty selection before starting. Rather, the difficulty will scale up the further you make it.
+
+2. CPU Usage Bar (Effectively your HP bar)
+
+This will most likely just redraw a bar at the bottom left of the screen from a very short green rectangle to a tall, red rectangle.
+We can draw those little measurement ticks beside the bar, but that's purely aesthetic and we can worry about it later.
+We should probably draw this and import the image instead of using an actual slider.
+
+3. Trivia Boxes
+
+Just a JPanel with 4 JButtons, each with a choice on them. Simple enough, I presume.
+
+4. Mundane Background.
+
+Remember, the point of the game is to clear popups from your screen while you are doing mundane, normal PC things.
+We're going to need drawings of the background (much more prefereble than shitty Google images).
+Perhaps, upon level clear, we can animate the 'player' switch to a different activity before the next level starts.
+
+5. HUD Timer
+
+Well no shit, it's a quiz game, why wouldn't there be a time trial high score system? Just a litle display at the top right of the screen.
+Aesthetics come later, we just need it working for now.
+
+6. High Score Display List
+
+We'll need 2 separate high score lists: one for those who lose before all the questions are complete, and one for those who complete.
+
+A score multiplier will be given for each time interval. For example, beating a single level in 1 to 2 minutes gives you a score multiplier of 50.
+Between 2 to 3 minutes, the score multiplier is 42. Anything beyond 10 minutes or so, and the score multiplier is constant at 5.
+
+Those who beat the game get a "Game Clear" bonus that scales in a similar manner off of how long it took them to beat the entire game.
+These values will probably have to be balanced, but that won't be hard. Implement it first, worry about balance later.
+
+7. Level Clear + Score Display
+
+We need a Level Clear Congratulations sequence. Which game doesn't have one of those? 
+The final score for each level will display during this sequence.
+Your final score will only display if you lose or beat the game, so don't put that in here.
+We could also maybe throw in a "Questions Correctly Answered" in this screen too.
+
+8. Pause Menu
+
+Create a KeyListener that takes a key (P, or Spacebar) and pops up a pause-menu on command. The timer will freeze.
+From here, you can quit early, resume, and set certain options
+I have no idea what these options will be, stay posted.
+
+9. Audio Sequences
+
+We need some sort of event trigger for certain events. Let's say once yu get past the "easy" questions, a new BGM starts to play.
+Level Clear will have its own littel fanfare music, and Critical CPU damage will have its own tense music.
+I'll get the music files, we just need to import them.
+
+10. Easter eggs?
+
+Perhaps, for some select questions, we'll throw in a secondary choice. 
+I don't know what this will do. Perhaps send you to a bonus level with smooth jazz music.
+Maybe it will start a new BGM of smooth jazz music.
+Something involving smooth jazz music. I like smooth jazz music.
+
+We could probably have a certain extra clickable area on the the screen that you would only notice if you were ACTIVELY looking for it.
+This does some sort of fancy easter egg effect. Maybe change the background screen to a picture of my shirtless, Calvin Klein-level model body (just kidding).
+
+11. Main Menu
+
+Almost forgot about this. Similar to the pause menu, we can probably inherit some methods anyways. Standard, run-of-the-mill menu.
+We can worry about making it look nice later.
+

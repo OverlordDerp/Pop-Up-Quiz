@@ -1,16 +1,10 @@
-/*
- * Pop-Up-Quiz
- * This class will create the application frame.
- * Quincy L, Vivian T, Aravind V
- */
+import javax.swing.JFrame;
 
 
-public class PopUpQuiz {
+public class PopUpQuiz extends JFrame {
+	public PopUpQuiz() {
+		super();
+		
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) {
-		System.out.println("I am a man.");
 	}
 }

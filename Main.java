@@ -3,6 +3,7 @@
  * This class will create the application frame.
  * Quincy L, Vivian T, Aravind V
  */
+
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsDevice;
 
@@ -13,6 +14,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		PopUpQuiz frame = new PopUpQuiz();
+		frame.addKeyListener(frame);
 		
 		GraphicsEnvironment ge 
 				= GraphicsEnvironment.getLocalGraphicsEnvironment();

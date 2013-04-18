@@ -2,6 +2,9 @@
 import javax.swing.JFrame;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Container;
 
 /**
  * The main graphical class of the game.
@@ -17,6 +20,9 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 	public PopUpQuiz() {
 		super();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		Container c = getContentPane();
+		c.add(new HUD());
 	}
 	
 	/**
@@ -39,4 +45,5 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 		
 	}
+
 }

@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Toolkit;
 
 /**
  * The main graphical class of the game.
@@ -22,7 +23,9 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		Container c = getContentPane();
-		c.add(new HUD());
+		
+		HUD h = new HUD(Toolkit.getDefaultToolkit().getScreenSize());
+		c.add(h);
 	}
 	
 	/**

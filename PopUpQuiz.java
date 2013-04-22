@@ -1,13 +1,27 @@
 
+/*
+ * Pop-Up-Quiz
+ * This class will create the application frame.
+ * Quincy L, Vivian T, Aravind V
+ */
+
+// Question Class + Random Question Selector
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 
+// HEAD
 /**
  * The main graphical class of the game.
  * @author quincy
  */
 public class PopUpQuiz extends JFrame implements KeyListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * The default constructor. 
 	 * After calling the base constructor, it sets up listeners for
@@ -39,4 +53,38 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 		
 	}
+    
+	public static void main (String[] args)
+		    {
+				char quot = 34;
+				int min = 0;
+				int max = 3;
+				String test;
+		        ArrayList<String> choices = new ArrayList<String>(20);
+		        
+		        choices.add(0, "When was the first " + quot + "Where's Waldo?" + quot + " book published?");
+		        //Correct answer: 1987
+		        choices.add(1, "How often are human brain cells replaced?");
+		        //Correct answer: Never
+		        choices.add(2, "What was Al Capone's nickname?");
+		        //Correct Answer: Scarface
+		        for (max = max; max >= 1; max--)
+		        {
+		        test = chooseRandomQuestion(min, max, choices);
+		        System.out.println(test);
+		        System.out.println(choices.indexOf(test));
+		        choices.remove(test);
+		        System.out.println(max);
+		        }
+		    }   
+		        
+	public static String chooseRandomQuestion(int min, int max, ArrayList<String> C)
+		    	{	
+					int selection = (int) ((Math.random()*max));
+					return (C.get(selection));
+					
+		    	}
+	
 }
+
+// Question Class + Random Question Selector

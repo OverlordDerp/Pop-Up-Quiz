@@ -14,17 +14,13 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Toolkit;
+import java.awt.Dimension;
 
 /**
  * The main graphical class of the game.
  * @author quincy
  */
 public class PopUpQuiz extends JFrame implements KeyListener {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
 	/**
 	 * The default constructor. 
 	 * After calling the base constructor, it sets up listeners for
@@ -37,8 +33,34 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 		
 		Container c = getContentPane();
 		
-		HUD h = new HUD(Toolkit.getDefaultToolkit().getScreenSize());
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		HUD h = new HUD(screenSize);
 		c.add(h);
+		
+		BackgroundGame bg = new BackgroundGame(new Dimension( 
+				(int) screenSize.getWidth(), 
+				(int) screenSize.getHeight() - h.getTaskbarHeight()));
+		
+		
+				char quot = 34;
+		int min = 0;
+		int max = 3;
+		String test;
+		ArrayList<String> choices = new ArrayList<String>(20);
+
+		choices.add(0, "When was the first " + quot + "Where's Waldo?" + quot + " book published?");
+		//Correct answer: 1987
+		choices.add(1, "How often are human brain cells replaced?");
+		//Correct answer: Never
+		choices.add(2, "What was Al Capone's nickname?");
+		//Correct Answer: Scarface
+		for (max = max; max >= 1; max--) {
+			test = chooseRandomQuestion(min, max, choices);
+			System.out.println(test);
+			System.out.println(choices.indexOf(test));
+			choices.remove(test);
+			System.out.println(max);
+		}
 	}
 	
 	/**
@@ -60,6 +82,12 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 	
 	public void keyTyped(KeyEvent e) {
 		
+	}
+	
+	public static String chooseRandomQuestion(int min, int max, ArrayList<String> C) {
+		int selection = (int) ((Math.random() * max));
+		return (C.get(selection));
+
 	}
 
 }

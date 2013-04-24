@@ -35,6 +35,8 @@ public class HUD extends JPanel {
 				getHeight() - startButtonHeight - startButtonPadding,
 				startButtonWidth, startButtonHeight);
 		startButton.setFocusable(false);
+		startButton.setBackground(new Color(0,0x99,0));
+		startButton.setForeground(Color.white);
 		validate();
 	}
 	
@@ -44,11 +46,17 @@ public class HUD extends JPanel {
 	 */
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.setColor(Color.RED);
+		g.setColor(Color.BLUE);
 		g.fillRect(0, getHeight() - taskbarHeight, getWidth(), taskbarHeight);
 		
 		//g.drawRect(0, 0, getWidth(), getHeight());
 	}
 	
-
+	/**
+	 * Gets the height of the taskbar
+	 * @return The height of the taskbar
+	 */
+	public int getTaskbarHeight() {
+		return taskbarHeight;
+	}
 }

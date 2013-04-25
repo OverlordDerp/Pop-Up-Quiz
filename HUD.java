@@ -13,20 +13,19 @@ import java.awt.event.KeyEvent;
 public class HUD extends JPanel {
 	private JButton startButton;
 	
-	private final int startButtonHeight = 20;
-	private final int startButtonWidth = 80;
-	private final int taskbarHeight = startButtonHeight + 4;
-	private final int startButtonPadding = (taskbarHeight - startButtonHeight)/2;
+	public static final int startButtonHeight = 20;
+	public static final int startButtonWidth = 80;
+	public static final int taskbarHeight = startButtonHeight + 4;
+	public static final int startButtonPadding = (taskbarHeight - startButtonHeight)/2;
 	/**
 	 * Base constructor. Creates all the components.
 	 * @param d Size of the parent
 	 */
 	public HUD(Dimension d) {
 		super();
-		setSize(d);
+		setSize((int) d.getWidth(), taskbarHeight);
 		// Prevents automatic layout
 		setLayout(null);
-		System.out.println(d);
 				
 		startButton = new JButton("Start");
 		add(startButton);

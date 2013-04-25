@@ -30,16 +30,23 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 	public PopUpQuiz() {
 		super();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLayout(null);
 		
 		Container c = getContentPane();
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		HUD h = new HUD(screenSize);
 		c.add(h);
+		h.setLocation(0, (int) screenSize.getHeight() - HUD.taskbarHeight);
+		
 		
 		BackgroundGame bg = new BackgroundGame(new Dimension( 
 				(int) screenSize.getWidth(), 
 				(int) screenSize.getHeight() - h.getTaskbarHeight()));
+		c.add(bg);
+		bg.addKeyListener(bg);
+		
+		validate();
 		
 		
 				char quot = 34;

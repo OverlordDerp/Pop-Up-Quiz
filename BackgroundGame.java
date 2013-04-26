@@ -26,27 +26,30 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	public BackgroundGame(Dimension d) {
 		super();
 		setSize(d);
-				
+		setFocusable(true);
+		setDoubleBuffered(true);
+		
 		try {
-			fullBin = ImageIO.read(new File("user-trash-full64.png"));
-			emptyBin = ImageIO.read(new File("user-trash64.png"));
-		} 
-		catch (IOException e) {
+			loadSprites();
+		}
+		catch(IOException e) {
 			System.out.println(e);
 			System.exit(-1);
 		}
+
+		rb = new RecycleBin();
+		add(rb);
+		rb.setBounds(new Rectangle((int) d.getWidth()/2, 
+				(int) (d.getHeight() - RecycleBin.fullBin.getHeight()),
+				RecycleBin.fullBin.getWidth(), 
+				RecycleBin.fullBin.getHeight()));
 		
-		binLocation = new Rectangle((int) d.getWidth()/2, 
-				(int) (d.getHeight() - fullBin.getHeight()),
-				fullBin.getWidth(), fullBin.getHeight());
-		
-		//Create a background loop thread
+				//Create a background loop thread
 		(new Thread(new Runnable() {
 			public void run() {
 				while(true) {
-					System.out.println(binLocation.x);
-					binLocation.x += speed;
-					speed -= Math.signum(speed);
+					rb.cycle();
+					repaint();
 				}
 			}
 		})).start();
@@ -58,13 +61,8 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 */
 	public enum GameState { PLAYING, LOST };
 	private GameState state;
-	private Rectangle binLocation;
-	private int movementAccel = 0;
-	private int speed = 0;
-	private int maxSpeed = 7;
-	boolean binIsUsed = false;
-	
-	BufferedImage emptyBin, fullBin;
+	private RecycleBin rb;
+
 	
 	/**
 	 * Gets the state of the game
@@ -75,23 +73,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	}
 	
 	public void keyTyped(KeyEvent e) {
-		switch (e.getKeyCode()) {
-			case KeyEvent.VK_LEFT:
-				speed -= 1;
-				if (binLocation.x < 0) {
-					binLocation.x = 0;
-				}
-				break;
-			case KeyEvent.VK_RIGHT:
-				speed += 1;
-				if (binLocation.x + binLocation.width > getWidth()) {
-					binLocation.x = getWidth() - binLocation.width;
-				}
-				break;
-		}
-		if (speed > Math.signum(speed) * maxSpeed) {
-			speed = (int) Math.signum(speed) * maxSpeed;
-		}
+
 	}
 	
 	public void keyReleased(KeyEvent e) {
@@ -99,19 +81,21 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	}
 	
 	public void keyPressed(KeyEvent e) {
-		
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_LEFT:
+				rb.increaseVelocity();
+				break;
+			case KeyEvent.VK_RIGHT:
+				rb.decreaseVelocity();
+				break;
+			default:
+				System.out.println("POO");
+		}
 	}
 	
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		System.out.println(binLocation);
-		if (binIsUsed) {
-			g.drawImage(fullBin, binLocation.x, binLocation.y, null);
-		}
-		else {
-			g.drawImage(emptyBin, binLocation.x, binLocation.y, null);
-			
-
-		}
+	private void loadSprites() throws IOException {
+		RecycleBin.fullBin = ImageIO.read(new File("user-trash-full64.png"));
+		RecycleBin.emptyBin = ImageIO.read(new File("user-trash64.png"));
 	}
+
 }

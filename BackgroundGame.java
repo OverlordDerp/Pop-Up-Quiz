@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.lang.Thread;
 import java.lang.Runnable;
 import java.lang.Math.*;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.awt.Point;
 /**
  * The game in the background
  * @author quincy
@@ -29,6 +34,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		setFocusable(true);
 		setDoubleBuffered(true);
 		
+		sprites = new HashMap<>();
 		try {
 			loadSprites();
 		}
@@ -37,18 +43,53 @@ public class BackgroundGame extends JPanel implements KeyListener {
 			System.exit(-1);
 		}
 
-		rb = new RecycleBin();
-		add(rb);
-		rb.setBounds(new Rectangle((int) d.getWidth()/2, 
-				(int) (d.getHeight() - RecycleBin.fullBin.getHeight()),
-				RecycleBin.fullBin.getWidth(), 
-				RecycleBin.fullBin.getHeight()));
 		
-				//Create a background loop thread
+		objects = new ArrayList<>();
+		rb = new RecycleBin();
+		rb.setBounds(new Rectangle(getSize()));
+		objects.add(rb);
+		
+		//Create a background loop thread
 		(new Thread(new Runnable() {
 			public void run() {
 				while(true) {
-					rb.cycle();
+					// Use an iterator for the outer loop because of
+					// for its good deletion sematnics
+					for (ListIterator<GameObject> i = objects.listIterator(); 
+							i.hasNext();) {
+						final GameObject g = i.next();
+						
+						//Delete dead objects
+						if (g.isDead) {
+							i.remove();
+							continue;
+						}
+						
+						//Put objects within bounds
+						confine(g);
+						
+						//Handle collisions
+						Rectangle myCollRect = calculateCollRect(g);
+						for (int j = i.nextIndex(); j < objects.size();
+								++j) {
+							final GameObject h = objects.get(j);
+							if (myCollRect.intersects(calculateCollRect(h))) {
+								new Thread(new Runnable() {
+									public void run() {
+										g.onCollide(h);
+									}
+								}).start();
+								new Thread(new Runnable() {
+									public void run() {
+										h.onCollide(g);
+									}
+								}).start();
+							}
+						}
+						
+						// Execute cycling methdos
+						g.cycle();
+					}
 					repaint();
 				}
 			}
@@ -62,7 +103,8 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	public enum GameState { PLAYING, LOST };
 	private GameState state;
 	private RecycleBin rb;
-
+	public static HashMap<String, BufferedImage> sprites;
+	private ArrayList<GameObject> objects;
 	
 	/**
 	 * Gets the state of the game
@@ -83,10 +125,10 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
-				rb.increaseVelocity();
+				rb.increaseXVelocity();
 				break;
 			case KeyEvent.VK_RIGHT:
-				rb.decreaseVelocity();
+				rb.decreaseXVelocity();
 				break;
 			default:
 				System.out.println("POO");
@@ -94,8 +136,82 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	}
 	
 	private void loadSprites() throws IOException {
-		RecycleBin.fullBin = ImageIO.read(new File("user-trash-full64.png"));
-		RecycleBin.emptyBin = ImageIO.read(new File("user-trash64.png"));
+		sprites.put("fullBin", ImageIO.read(new File("user-trash-full64.png")));
+		sprites.put("emptyBin", ImageIO.read(new File("user-trash64.png")));
+	}
+	
+
+	/**
+	 * Moves g until it is contained within its boundary rectangle
+	 * @param g 
+	 */
+	private void confine(GameObject g) {
+		Rectangle bounds = g.getBounds();
+		if (bounds == null) {
+			return;
+		}
+		
+		Rectangle areaRect = calculateAreaRect(g);
+		
+		if (bounds.contains(areaRect)) {
+			return;
+		}
+		
+		if (areaRect.x < bounds.x) {
+			areaRect.x = bounds.x;
+		}
+		else if (areaRect.x + areaRect.width > bounds.x + bounds.width) {
+			areaRect.x = bounds.x + bounds.width - areaRect.width;
+		}
+		
+		if (areaRect.y < bounds.y) {
+			areaRect.y = bounds.y;
+		}
+		else if (areaRect.y + areaRect.height > bounds.y + bounds.height) {
+			areaRect.y = bounds.y + bounds.height - areaRect.height;
+		}
+		
+		g.setPosition(new Point(areaRect.x, areaRect.y));
+	}
+	
+	/**
+	 * Calculates the rectangle from the top-left corner of the object's sprite
+	 * to its bottom-right.
+	 * @param g The object
+	 * @return The area rectangle
+	 */
+	private Rectangle calculateAreaRect(GameObject g) {
+		Point p = g.getPosition();
+		BufferedImage s = sprites.get(g.getSprite());
+		if (s == null) {
+			return new Rectangle(p.x, p.y, 0, 0);
+		}
+		else {
+			return new Rectangle(p.x, p.y, s.getWidth(), s.getHeight());
+		}
+	}
+	
+	/**
+	 * Calculates the collision rectangle of the object from its offset
+	 * @param g The object
+	 * @return The collision rectangle
+	 */
+	private Rectangle calculateCollRect(GameObject g) {
+		Point p = g.getPosition();
+		Rectangle collRectOffset = g.getCollRectOffset();
+		return new Rectangle(p.x + collRectOffset.x, 
+				p.y + collRectOffset.y,
+				collRectOffset.width, collRectOffset.height);
 	}
 
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		for (GameObject h : objects) {
+			Point p = h.getPosition();
+			BufferedImage s;
+			if ((s = sprites.get(h.getSprite())) != null) {
+				g.drawImage(sprites.get(h.getSprite()), p.x, p.y, null);
+			}
+		}
+	}
 }

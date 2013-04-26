@@ -7,20 +7,31 @@ import java.io.IOException;
 import java.awt.Graphics;
 import java.io.File;
 import java.awt.Color;
-
-class RecycleBin extends JPanel {
+import java.awt.Point;
+/**
+ * The recycling bin that collects stuff.
+ * @author quincy
+ */
+class RecycleBin extends GameObject {
 
 	public RecycleBin() {
 		super();
-
+		sprite = "emptyBin";
+		BufferedImage emptyBin = BackgroundGame.sprites.get(sprite);
+		collRectOffset = new Rectangle(0,0, 
+				emptyBin.getWidth(), emptyBin.getHeight());
 	}
-
-	public void increaseVelocity() {
-		++velocity;
+	/**
+	 * Increments the bin's velocity (does not necessarily speed it up)
+	 */
+	public void increaseXVelocity() {
+		++velocity.x;
 	}
-
-	public void decreaseVelocity() {
-		--velocity;
+	/**
+	 * Decrements the bin's velocity (does not necessarily speed it up)
+	 */
+	public void decreaseXVelocity() {
+		--velocity.x;
 	}
 
 	/**
@@ -30,31 +41,12 @@ class RecycleBin extends JPanel {
 	public boolean isUsed() {
 		return false;
 	}
-	private double movementAccel = 0;
-	private double velocity = 0;
-	public static BufferedImage emptyBin, fullBin;
 
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		g.setColor(Color.red);
-		g.drawRect(0, 0, 10, 10);
-		if (isUsed()) {
-			g.drawImage(fullBin, getBounds().x, getBounds().y, null);
-		} else {
-			g.drawImage(emptyBin, getBounds().x, getBounds().y, null);
-		}
-	}
-
-	// Stuff to be looped
+	/**
+	 * Every cycle, decelerates the recycle bin.
+	 */
 	public void cycle() {
-		setLocation((int) (getX() + velocity), getY());
-		if (getX() < 0) {
-			setLocation(0, getY());
-			velocity = 0;
-		} else if (getX() > getWidth() - getWidth()) {
-			setLocation(getWidth() - getWidth(), getY());
-			velocity = 0;
-		}
-		velocity -= 0.1 * Math.signum(velocity);
+		velocity.x -= 0.1 * Math.signum(velocity.x);
+		velocity.y -= 0.1 * Math.signum(velocity.y);
 	}
 }

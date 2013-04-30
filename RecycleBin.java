@@ -21,32 +21,25 @@ class RecycleBin extends GameObject {
 		collRectOffset = new Rectangle(0,0, 
 				emptyBin.getWidth(), emptyBin.getHeight());
 	}
-	/**
-	 * Increments the bin's velocity (does not necessarily speed it up)
-	 */
-	public void increaseXVelocity() {
-		++velocity.x;
-	}
-	/**
-	 * Decrements the bin's velocity (does not necessarily speed it up)
-	 */
-	public void decreaseXVelocity() {
-		--velocity.x;
-	}
+
 
 	/**
-	 * Returns whether the bin has collected any items
-	 * @return 
+	 * 
+	 * @return whether the bin has collected any items
 	 */
 	public boolean isUsed() {
 		return false;
 	}
 
+	
 	/**
 	 * Every cycle, decelerates the recycle bin.
 	 */
 	public void cycle() {
-		velocity.x -= 0.1 * Math.signum(velocity.x);
-		velocity.y -= 0.1 * Math.signum(velocity.y);
+		super.decelerate(0.2);
+		super.applyAccel();
+		super.applyVelocity();
 	}
+	
+	private double constAccel = 0.00001;	
 }

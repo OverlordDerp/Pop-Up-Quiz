@@ -1,14 +1,15 @@
 /**
  * The base class of all in-game objects that interact with each other.
  */
-import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 abstract class GameObject {
 	public GameObject() {
-		position = new Point(0,0);
-		accel = new Point(0,0);
-		velocity = new Point(0,0);
+		position = new Point2D.Double(0,0);
+		accel = new Point2D.Double(0,0);
+		velocity = new Point2D.Double(0,0);
 	}
 	
 	/**
@@ -18,15 +19,15 @@ abstract class GameObject {
 	/**
 	 * Acceleration in x and y directions.
 	 */
-	protected Point accel;
+	protected Point2D.Double accel;
 	/**
 	 * Velocity in x and y direcitons.
 	 */
-	protected Point velocity;
+	protected Point2D.Double velocity;
 	/**
 	 * Position.
 	 */
-	protected Point position;
+	protected Point2D.Double position;
 	
 	/**
 	 * The rectangle on which collision calculations are based. Relative to
@@ -43,7 +44,9 @@ abstract class GameObject {
 	 * Code to run over and over again.
 	 */
 	public void cycle() {
-		
+		applyAccel();
+		applyVelocity();
+		decelerate();
 	}
 	
 	/**
@@ -79,14 +82,14 @@ abstract class GameObject {
 	/**
 	 * @return the position
 	 */
-	public Point getPosition() {
-		return new Point(position);
+	public Point2D.Double getPosition() {
+		return new Point2D.Double(position.x, position.y);
 	}
 
 	/**
 	 * @param position the position to set
 	 */
-	public void setPosition(Point position) {
+	public void setPosition(Point2D.Double position) {
 		this.position = position;
 	}
 
@@ -123,5 +126,53 @@ abstract class GameObject {
 	 */
 	public void setCollRectOffset(Rectangle collRectOffset) {
 		this.collRectOffset = collRectOffset;
+	}
+	
+	protected void applyAccel() {
+		velocity.x += accel.x;
+		velocity.y += accel.y;
+	}
+	
+	/**
+	 * Offsets the position by the velocity
+	 */
+	protected void applyVelocity() {
+		position.x += velocity.x;
+		position.y += velocity.y;
+	}
+	
+	/**
+	 * Decelerates the object by some multiplier of the object
+	 * @param multiplier A number by which to multiply the acceleration
+	 * and velocity. Should be in (0,1).
+	 */
+	protected void decelerate(double multiplier) {
+		double epsilon = 0;
+		System.out.println("Acceleration: " + accel);
+		System.out.println("vx:" + velocity.x);
+		System.out.println("d ax: " + multiplier * -velocity.x);
+		velocity.x *= multiplier;
+		velocity.y *= multiplier;
+	}
+	
+	/**
+	 * Calls decelerate(double) with multiplier 0.1
+	 */
+	protected void decelerate() {
+		decelerate(0.1);
+	}
+
+	/**
+	 * @return the accel
+	 */
+	public Point2D.Double getAccel() {
+		return accel;
+	}
+
+	/**
+	 * @param accel the accel to set
+	 */
+	public void setAccel(Point2D.Double accel) {
+		this.accel = accel;
 	}
 }

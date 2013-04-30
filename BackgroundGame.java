@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.Point;
 /**
  * The game in the background
@@ -46,10 +48,13 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		
 		objects = new ArrayList<>();
 		rb = new RecycleBin();
-		rb.setBounds(new Rectangle(getSize()));
+		rb.setBounds(new Rectangle(d));  
+		rb.setPosition(new Point2D.Double(d.width/2, 
+				d.height - sprites.get(rb.getSprite()).getHeight()));
+		
 		objects.add(rb);
 		
-		//Create a background loop thread
+		//Create a background logic thread
 		(new Thread(new Runnable() {
 			public void run() {
 				while(true) {
@@ -89,8 +94,21 @@ public class BackgroundGame extends JPanel implements KeyListener {
 						
 						// Execute cycling methdos
 						g.cycle();
+						System.out.println(g.getPosition());
 					}
+				} // While loop ends
+			}
+		})).start();
+		
+		// Another loop for painting
+		(new Thread(new Runnable() {
+			public void run() {
+				while(true) {
 					repaint();
+					try {
+						Thread.sleep(16);
+					} catch (InterruptedException e) 
+					{}
 				}
 			}
 		})).start();
@@ -119,19 +137,24 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	}
 	
 	public void keyReleased(KeyEvent e) {
-		
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_LEFT:
+				rb.setAccel(new Point2D.Double(0, 0));
+				break;
+			case KeyEvent.VK_RIGHT:
+				rb.setAccel(new Point2D.Double(0, 0));
+				break;
+		}		
 	}
 	
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
-				rb.increaseXVelocity();
+				rb.setAccel(new Point2D.Double(-0.3, 0));
 				break;
 			case KeyEvent.VK_RIGHT:
-				rb.decreaseXVelocity();
+				rb.setAccel(new Point2D.Double(0.3, 0));
 				break;
-			default:
-				System.out.println("POO");
 		}
 	}
 	
@@ -171,7 +194,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 			areaRect.y = bounds.y + bounds.height - areaRect.height;
 		}
 		
-		g.setPosition(new Point(areaRect.x, areaRect.y));
+		g.setPosition(new Point2D.Double(areaRect.x, areaRect.y));
 	}
 	
 	/**
@@ -181,13 +204,13 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 * @return The area rectangle
 	 */
 	private Rectangle calculateAreaRect(GameObject g) {
-		Point p = g.getPosition();
+		Point2D.Double p = g.getPosition();
 		BufferedImage s = sprites.get(g.getSprite());
 		if (s == null) {
-			return new Rectangle(p.x, p.y, 0, 0);
+			return new Rectangle((int) p.x, (int)p.y, 0, 0);
 		}
 		else {
-			return new Rectangle(p.x, p.y, s.getWidth(), s.getHeight());
+			return new Rectangle((int)p.x, (int) p.y, s.getWidth(), s.getHeight());
 		}
 	}
 	
@@ -197,20 +220,24 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 * @return The collision rectangle
 	 */
 	private Rectangle calculateCollRect(GameObject g) {
-		Point p = g.getPosition();
+		Point2D.Double p = g.getPosition();
 		Rectangle collRectOffset = g.getCollRectOffset();
-		return new Rectangle(p.x + collRectOffset.x, 
-				p.y + collRectOffset.y,
+		return new Rectangle((int) (p.x + collRectOffset.x), 
+				(int) (p.y + collRectOffset.y),
 				collRectOffset.width, collRectOffset.height);
 	}
 
+	/**
+	 * Draws the sprites of all of the GameObjects
+	 * @param g Graphics context
+	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		for (GameObject h : objects) {
-			Point p = h.getPosition();
+			Point2D.Double p = h.getPosition();
 			BufferedImage s;
 			if ((s = sprites.get(h.getSprite())) != null) {
-				g.drawImage(sprites.get(h.getSprite()), p.x, p.y, null);
+				g.drawImage(sprites.get(h.getSprite()), (int) p.x, (int) p.y, null);
 			}
 		}
 	}

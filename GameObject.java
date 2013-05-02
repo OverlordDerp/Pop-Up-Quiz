@@ -4,12 +4,17 @@
 import java.awt.geom.Point2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 abstract class GameObject {
-	public GameObject() {
+	public GameObject(Rectangle bounds) {
 		position = new Point2D.Double(0,0);
 		accel = new Point2D.Double(0,0);
 		velocity = new Point2D.Double(0,0);
+		this.bounds = (Rectangle) bounds.clone();
+		
+		lastKinematicsVars = new HashMap<>();
 	}
 	
 	/**
@@ -23,7 +28,7 @@ abstract class GameObject {
 	/**
 	 * Velocity in x and y direcitons.
 	 */
-	protected Point2D.Double velocity;
+	private Point2D.Double velocity;
 	/**
 	 * Position.
 	 */
@@ -50,13 +55,22 @@ abstract class GameObject {
 	}
 	
 	/**
-	 * Code to run on overlapping another GameObject.
-	 * Override this in child classes for polymorphism.
+	 * All classes should override this method like so:
+	 * 
+	 * g.getCollHandler().to(this);
+	 * 
+	 * This code takes the CollHandler of the other object, and calls the 
+	 * handler appropriate for this object. This way, handling collisions with
+	 * various objects can be handled through polymorphism rather than e.g.
+	 * object identifier properties.
+	 * 
+	 * In other words, the CollHandler is the visitor
+	 * in the <em>visitor design pattern</em>.
+	 * 
+	 * Note that onCollide(g) calls g's handlers, not this object's.
 	 * @param g The other GameObject.
 	 */
-	public void onCollide(GameObject g) {
-		
-	}
+	public abstract void onCollide(GameObject g);
 	
 	/**
 	 * Boundary within which to confine the object
@@ -137,8 +151,8 @@ abstract class GameObject {
 	 * Offsets the position by the velocity
 	 */
 	protected void applyVelocity() {
-		position.x += velocity.x;
-		position.y += velocity.y;
+		position.x += getVelocity().x;
+		position.y += getVelocity().y;
 	}
 	
 	/**
@@ -148,9 +162,11 @@ abstract class GameObject {
 	 */
 	protected void decelerate(double multiplier) {
 		double epsilon = 0;
+		/*
 		System.out.println("Acceleration: " + accel);
 		System.out.println("vx:" + velocity.x);
 		System.out.println("d ax: " + multiplier * -velocity.x);
+		*/
 		velocity.x *= multiplier;
 		velocity.y *= multiplier;
 	}
@@ -175,4 +191,79 @@ abstract class GameObject {
 	public void setAccel(Point2D.Double accel) {
 		this.accel = accel;
 	}
+	
+	public void calculateCollRectFromSprite(String s) {
+		BufferedImage theSprite = BackgroundGame.sprites.get(s);
+		collRectOffset = new Rectangle(0,0, 
+				theSprite.getWidth(), theSprite.getHeight());
+	}
+	
+	/**
+	 * Holds values for position, velocity, and acceleration stored
+	 * through a call to @link stashKinematicsVars.
+	 */
+	HashMap<String, Point2D.Double> lastKinematicsVars;
+	
+	/**
+	 * Has the object store its current kinematics variables (s-v-a) 
+	 * in case they have to be restored after e.g. a collision
+	 */
+	public void stashKinematicsVars() {
+		lastKinematicsVars.put("position", (Point2D.Double) position.clone());
+		lastKinematicsVars.put("velocity", (Point2D.Double) getVelocity().clone());
+		lastKinematicsVars.put("accel", (Point2D.Double) accel.clone());
+	}
+	
+	public void popKinematicsVars() {
+		position = lastKinematicsVars.get("position");
+		setVelocity(lastKinematicsVars.get("velocity"));
+		accel = lastKinematicsVars.get("accel");
+	}
+
+	/**
+	 * @return the velocity
+	 */
+	public Point2D.Double getVelocity() {
+		return velocity;
+	}
+
+	/**
+	 * @param velocity the velocity to set
+	 */
+	public void setVelocity(Point2D.Double velocity) {
+		this.velocity = velocity;
+	}
+
+	/**
+	 * @return the collHandler
+	 */
+	public CollHandler getCollHandler() {
+		return collHandler;
+	}
+	
+	/**
+	 * Child classes will implement this interface, overriding the various 
+	 * methods to be called on collision with various objects. Handlers are 
+	 * then linked to the object using @link addCollHandler. This allows
+	 * the compiler to pick which method to be called
+	 */
+	protected interface CollHandler {
+		void to(RecycleBin a);
+		void to(Junk a);
+		void to(Sysfile a);
+	}
+	
+	/**
+	 * Sets this object's collision handler object.
+	 * @param c Object that defines functions to be called on collision with
+	 * other GameObjects
+	 */
+	public void setCollHandler(CollHandler c) {
+		collHandler = c;
+	}
+	
+	/**
+	 * The CollHandler that serves this object.
+	 */
+	protected CollHandler collHandler;
 }

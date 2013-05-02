@@ -5,13 +5,16 @@ import javax.swing.JButton;
 import java.awt.Dimension;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
-
+import javax.swing.JLabel;
+import java.awt.Rectangle;
+import java.awt.Font;
 /**
  * Draws the taskbar, the score, the CPU usage..... the heads-up display.
  * @author quincy
  */
 public class HUD extends JPanel {
 	private JButton startButton;
+	private JLabel cpuUsageLabel;
 	
 	public static final int startButtonHeight = 20;
 	public static final int startButtonWidth = 80;
@@ -26,16 +29,23 @@ public class HUD extends JPanel {
 		setSize((int) d.getWidth(), taskbarHeight);
 		// Prevents automatic layout
 		setLayout(null);
-				
+		
 		startButton = new JButton("Start");
 		add(startButton);
-		
 		startButton.setBounds(startButtonPadding,
 				getHeight() - startButtonHeight - startButtonPadding,
 				startButtonWidth, startButtonHeight);
 		startButton.setFocusable(false);
 		startButton.setBackground(new Color(0,0x99,0));
 		startButton.setForeground(Color.white);
+		
+		cpuUsageLabel = new JLabel("CPU:     ");
+		add(cpuUsageLabel);
+		cpuUsageLabel.setLocation((int) (getWidth() * 0.6), 0);
+		cpuUsageLabel.setFont(new Font("Courier New", Font.BOLD, 18));
+		cpuUsageLabel.setForeground(Color.red);
+		cpuUsageLabel.setSize(cpuUsageLabel.getMinimumSize());
+		
 		validate();
 	}
 	
@@ -47,7 +57,6 @@ public class HUD extends JPanel {
 		super.paintComponent(g);
 		g.setColor(Color.BLUE);
 		g.fillRect(0, getHeight() - taskbarHeight, getWidth(), taskbarHeight);
-		
 		//g.drawRect(0, 0, getWidth(), getHeight());
 	}
 	
@@ -57,5 +66,9 @@ public class HUD extends JPanel {
 	 */
 	public int getTaskbarHeight() {
 		return taskbarHeight;
+	}
+	
+	public void setCpuUsage(int cpuUsage) {
+		cpuUsageLabel.setText("CPU: " + cpuUsage + "%");
 	}
 }

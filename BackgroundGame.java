@@ -35,6 +35,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		setSize(d);
 		setFocusable(true);
 		setDoubleBuffered(true);
+		setBackground(Color.red);
 		
 		sprites = new HashMap<>();
 		try {
@@ -45,16 +46,22 @@ public class BackgroundGame extends JPanel implements KeyListener {
 			System.exit(-1);
 		}
 
+		Rectangle boundsRect = new Rectangle(d);
 		
 		objects = new ArrayList<>();
-		rb = new RecycleBin();
-		rb.setBounds(new Rectangle(d));  
+		rb = new RecycleBin(boundsRect);
 		rb.setPosition(new Point2D.Double(d.width/2, 
 				d.height - sprites.get(rb.getSprite()).getHeight()));
 		
 		objects.add(rb);
 		
-		//Create a background logic thread
+		GameObject a = new Sysfile(boundsRect, Sysfile.Size.L);
+		objects.add(a);
+		a.setAccel(new Point2D.Double(0, 0.1));
+		objects.add(new Sysfile(boundsRect,Sysfile.Size.M));
+		objects.add(new Sysfile(boundsRect, Sysfile.Size.S));
+		
+		//Create a background loop
 		(new Thread(new Runnable() {
 			public void run() {
 				while(true) {
@@ -72,29 +79,33 @@ public class BackgroundGame extends JPanel implements KeyListener {
 						
 						//Put objects within bounds
 						confine(g);
-						
+
+												
+						//Store state of kinematics variables
+						g.stashKinematicsVars();
+
 						//Handle collisions
 						Rectangle myCollRect = calculateCollRect(g);
-						for (int j = i.nextIndex(); j < objects.size();
-								++j) {
-							final GameObject h = objects.get(j);
+						for (ListIterator<GameObject> j = objects.listIterator(); 
+							j.hasNext();) {
+							final GameObject h = j.next();
+							if (g == h) {
+								continue;
+							}
+							
 							if (myCollRect.intersects(calculateCollRect(h))) {
 								new Thread(new Runnable() {
 									public void run() {
 										g.onCollide(h);
 									}
 								}).start();
-								new Thread(new Runnable() {
-									public void run() {
-										h.onCollide(g);
-									}
-								}).start();
 							}
 						}
-						
+										
 						// Execute cycling methdos
 						g.cycle();
-						System.out.println(g.getPosition());
+						
+
 					}
 				} // While loop ends
 			}
@@ -150,10 +161,10 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
-				rb.setAccel(new Point2D.Double(-0.3, 0));
+				rb.setAccel(new Point2D.Double(-0.1, 0));
 				break;
 			case KeyEvent.VK_RIGHT:
-				rb.setAccel(new Point2D.Double(0.3, 0));
+				rb.setAccel(new Point2D.Double(+0.1, 0));
 				break;
 		}
 	}
@@ -161,6 +172,10 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	private void loadSprites() throws IOException {
 		sprites.put("fullBin", ImageIO.read(new File("user-trash-full64.png")));
 		sprites.put("emptyBin", ImageIO.read(new File("user-trash64.png")));
+		sprites.put("sysfileLarge", ImageIO.read(new File("sysfile1-48.png")));
+		sprites.put("sysfileMedium", ImageIO.read(new File("sysfile2-32.png")));
+		sprites.put("sysfileSmall", ImageIO.read(new File("sysfile3-16.png")));
+		sprites.put("junk", ImageIO.read(new File("junk.png")));
 	}
 	
 
@@ -240,5 +255,11 @@ public class BackgroundGame extends JPanel implements KeyListener {
 				g.drawImage(sprites.get(h.getSprite()), (int) p.x, (int) p.y, null);
 			}
 		}
+	}
+	
+	private int cpuUsage = 0;
+	
+	public int getCpuUsage() {
+		return cpuUsage;
 	}
 }

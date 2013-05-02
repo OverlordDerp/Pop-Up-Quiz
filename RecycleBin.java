@@ -14,12 +14,27 @@ import java.awt.Point;
  */
 class RecycleBin extends GameObject {
 
-	public RecycleBin() {
-		super();
+	public RecycleBin(Rectangle bounds) {
+		super(bounds);
 		sprite = "emptyBin";
-		BufferedImage emptyBin = BackgroundGame.sprites.get(sprite);
-		collRectOffset = new Rectangle(0,0, 
-				emptyBin.getWidth(), emptyBin.getHeight());
+		calculateCollRectFromSprite(sprite);
+		
+		/**
+		 * The recycle bin should destroy every file it comes into contact with.
+		 * Upon recycling something, the icon should change from the empty
+		 * icon to the full one. 
+		 */
+		collHandler = new CollHandler() {
+			public void to(Sysfile a) {
+				a.kill();
+			}
+			public void to(Junk a) {
+				a.kill();
+			}
+			public void to(RecycleBin a) {
+				// Should never happen
+			}
+		};
 	}
 
 
@@ -41,5 +56,8 @@ class RecycleBin extends GameObject {
 		super.applyVelocity();
 	}
 	
-	private double constAccel = 0.00001;	
+
+	public void onCollide(GameObject g) {
+		g.getCollHandler().to(this);
+	}
 }

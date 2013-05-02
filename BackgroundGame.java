@@ -35,7 +35,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		setSize(d);
 		setFocusable(true);
 		setDoubleBuffered(true);
-		setBackground(Color.red);
+		//setBackground(Color.red);
 		
 		sprites = new HashMap<>();
 		try {
@@ -60,6 +60,11 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		a.setAccel(new Point2D.Double(0, 0.1));
 		objects.add(new Sysfile(boundsRect,Sysfile.Size.M));
 		objects.add(new Sysfile(boundsRect, Sysfile.Size.S));
+		
+		GameObject b = new Junk(boundsRect);
+		b.setPosition(new Point2D.Double(60,0));
+		b.setAccel(new Point2D.Double(0,0.05));
+		objects.add(b);
 		
 		//Create a background loop
 		(new Thread(new Runnable() {
@@ -257,9 +262,9 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		}
 	}
 	
-	private int cpuUsage = 0;
+	private double cpuUsage = 0;
 	
-	public int getCpuUsage() {
+	public double getCpuUsage() {
 		return cpuUsage;
 	}
 }

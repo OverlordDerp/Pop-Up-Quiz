@@ -5,16 +5,17 @@ import javax.swing.JButton;
 import java.awt.Dimension;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
-import javax.swing.JLabel;
 import java.awt.Rectangle;
 import java.awt.Font;
+import javax.swing.JProgressBar;
+import javax.swing.JLabel;
 /**
  * Draws the taskbar, the score, the CPU usage..... the heads-up display.
  * @author quincy
  */
 public class HUD extends JPanel {
 	private JButton startButton;
-	private JLabel cpuUsageLabel;
+	private JProgressBar cpuUsageBar;
 	
 	public static final int startButtonHeight = 20;
 	public static final int startButtonWidth = 80;
@@ -39,12 +40,22 @@ public class HUD extends JPanel {
 		startButton.setBackground(new Color(0,0x99,0));
 		startButton.setForeground(Color.white);
 		
-		cpuUsageLabel = new JLabel("CPU:     ");
-		add(cpuUsageLabel);
-		cpuUsageLabel.setLocation((int) (getWidth() * 0.6), 0);
-		cpuUsageLabel.setFont(new Font("Courier New", Font.BOLD, 18));
-		cpuUsageLabel.setForeground(Color.red);
-		cpuUsageLabel.setSize(cpuUsageLabel.getMinimumSize());
+		JLabel label = new JLabel("CPU Usage: ");
+		add(label);
+		label.setLocation((int) (getWidth() * 0.6) - 120, startButtonPadding);
+		label.setFont(new Font("Courier New", Font.BOLD, 18));
+		label.setForeground(Color.white);
+		label.setSize(label.getMinimumSize());
+		
+		
+		cpuUsageBar = new JProgressBar();
+		add(cpuUsageBar);
+		cpuUsageBar.setLocation((int) (getWidth() * 0.6), startButtonPadding);
+		cpuUsageBar.setFont(new Font("Courier New", Font.BOLD, 18));
+		cpuUsageBar.setForeground(Color.green);
+		cpuUsageBar.setSize(100,startButtonHeight);
+		// Progress (percent) string
+		cpuUsageBar.setStringPainted(true);
 		
 		validate();
 	}
@@ -69,6 +80,6 @@ public class HUD extends JPanel {
 	}
 	
 	public void setCpuUsage(int cpuUsage) {
-		cpuUsageLabel.setText("CPU: " + cpuUsage + "%");
+		cpuUsageBar.setValue(cpuUsage);
 	}
 }

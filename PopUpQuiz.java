@@ -50,7 +50,8 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 		(new Thread(new Runnable() {
 			public void run() {
 				while(true) {
-					h.setCpuUsage(bg.getCpuUsage());
+					//h.setCpuUsage(bg.getCpuUsage());
+					h.setCpuUsage(20);
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) 

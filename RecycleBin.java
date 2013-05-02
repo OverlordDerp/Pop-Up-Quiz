@@ -26,10 +26,18 @@ class RecycleBin extends GameObject {
 		 */
 		collHandler = new CollHandler() {
 			public void to(Sysfile a) {
+				++amountCollected;
 				a.kill();
+				if (isUsed() && !sprite.equals("fullBin")) {
+					sprite = "fullBin";
+				}
 			}
 			public void to(Junk a) {
+				++amountCollected;
 				a.kill();
+				if (isUsed()  && !sprite.equals("fullBin")) {
+					sprite = "fullBin";
+				}
 			}
 			public void to(RecycleBin a) {
 				// Should never happen
@@ -43,7 +51,7 @@ class RecycleBin extends GameObject {
 	 * @return whether the bin has collected any items
 	 */
 	public boolean isUsed() {
-		return false;
+		return amountCollected != 0;
 	}
 
 	
@@ -60,4 +68,6 @@ class RecycleBin extends GameObject {
 	public void onCollide(GameObject g) {
 		g.getCollHandler().to(this);
 	}
+	
+	private long amountCollected = 0;
 }

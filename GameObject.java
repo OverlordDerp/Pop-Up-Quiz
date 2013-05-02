@@ -266,4 +266,6 @@ abstract class GameObject {
 	 * The CollHandler that serves this object.
 	 */
 	protected CollHandler collHandler;
+	
+	public static BackgroundGame bgg;
 }

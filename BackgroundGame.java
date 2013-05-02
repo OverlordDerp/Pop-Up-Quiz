@@ -37,6 +37,8 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		setDoubleBuffered(true);
 		//setBackground(Color.red);
 		
+		GameObject.bgg = this;
+	
 		sprites = new HashMap<>();
 		try {
 			loadSprites();
@@ -140,6 +142,8 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	public static HashMap<String, BufferedImage> sprites;
 	private ArrayList<GameObject> objects;
 	
+
+
 	/**
 	 * Gets the state of the game
 	 * @return GameState.PLAYING or GameState.LOST
@@ -266,5 +270,9 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	
 	public double getCpuUsage() {
 		return cpuUsage;
+	}
+	
+	public void setCpuUsage(double val) {
+		cpuUsage = val;	
 	}
 }

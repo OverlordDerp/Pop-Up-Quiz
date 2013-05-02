@@ -24,6 +24,8 @@ class RecycleBin extends GameObject {
 		 * Upon recycling something, the icon should change from the empty
 		 * icon to the full one. 
 		 */
+
+		
 		collHandler = new CollHandler() {
 			public void to(Sysfile a) {
 				++amountCollected;

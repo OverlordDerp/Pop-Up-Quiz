@@ -7,9 +7,17 @@
 
 // Question Class + Random Question Selector
 import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Container;
@@ -75,6 +83,43 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 		//Correct answer: Never
 		choices.add(2, "What was Al Capone's nickname?");
 		//Correct Answer: Scarface
+		
+		final JDialog dialog = new JDialog(this,"Question!");
+		JLabel randQuestion = new JLabel (choices.get(0));
+		randQuestion.setHorizontalAlignment(JLabel.CENTER);
+		Font font = randQuestion.getFont();
+        randQuestion.setFont(randQuestion.getFont().deriveFont(font.PLAIN,14.0f));
+        JButton choice1 = new JButton("1986");
+        JButton choice2 = new JButton("1987");
+        JButton choice3 = new JButton("1984");
+        JButton choice4 = new JButton("1973");
+        choice1.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		dialog.setVisible(false);
+        		dialog.dispose();
+        	}
+        });
+        choice2.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		dialog.setVisible(false);
+        		dialog.dispose();
+        	}
+        });
+        choice3.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		dialog.setVisible(false);
+        		dialog.dispose();
+        	}
+        });
+        choice4.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		dialog.setVisible(false);
+        		dialog.dispose();
+        	}
+        });
+        
+        dialog.setVisible(true);
+		
 		for (max = max; max >= 1; max--) {
 			test = chooseRandomQuestion(min, max, choices);
 			System.out.println(test);

@@ -8,20 +8,20 @@ class Sysfile extends GameObject {
 		super(bounds);
 		// Some distance for (de)spawning offscreen
 		bounds.y -= 64;
-		bounds.height += 128;
+		bounds.height += 64*3;
 			
 		switch(s) {
 			case S:
 				sprite = "sysfileSmall";
-				accel = new Double(0, 2.5);
+				accel = new Double(0, 0.35);
 				break;
 			case M:
 				sprite = "sysfileMedium";
-				accel = new Double(0, 2.2);
+				accel = new Double(0, 0.32);
 				break;
 			case L:
 				sprite = "sysfileLarge";
-				accel = new Double(0, 2);
+				accel = new Double(0, 0.3);
 				break;	
 		}
 		

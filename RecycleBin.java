@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.io.File;
 import java.awt.Color;
 import java.awt.Point;
+
 /**
  * The recycling bin that collects stuff.
  * @author quincy
@@ -18,35 +19,37 @@ class RecycleBin extends GameObject {
 		super(bounds);
 		sprite = "emptyBin";
 		calculateCollRectFromSprite();
-		
+
 		/**
 		 * The recycle bin should destroy every file it comes into contact with.
 		 * Upon recycling something, the icon should change from the empty
 		 * icon to the full one. 
 		 */
-
-		
 		collHandler = new CollHandler() {
+
 			public void to(Sysfile a) {
 				++amountCollected;
 				a.kill();
 				if (isUsed() && !sprite.equals("fullBin")) {
 					sprite = "fullBin";
 				}
+				bgg.increaseCpuUsage(1);
 			}
+
 			public void to(Junk a) {
 				++amountCollected;
 				a.kill();
-				if (isUsed()  && !sprite.equals("fullBin")) {
+				if (isUsed() && !sprite.equals("fullBin")) {
 					sprite = "fullBin";
 				}
+				bgg.decreaseCpuUsage(5);
 			}
+
 			public void to(RecycleBin a) {
 				// Should never happen
 			}
 		};
 	}
-
 
 	/**
 	 * 
@@ -56,21 +59,20 @@ class RecycleBin extends GameObject {
 		return getAmountCollected() != 0;
 	}
 
-	
-	/**
+	/**addActi
 	 * Every cycle, decelerates the recycle bin.
 	 */
 	public void cycle() {
-		super.decelerate(0.2);
+
+
+			super.decelerate((-0.1 * Math.log (0.01 * (amountCollected+1))) / 0.6);
 		super.applyAccel();
 		super.applyVelocity();
 	}
-	
-	
+
 	public void collideWith(GameObject g) {
 		g.getCollHandler().to(this);
 	}
-	
 	private long amountCollected = 0;
 
 	/**
@@ -80,5 +82,4 @@ class RecycleBin extends GameObject {
 	public long getAmountCollected() {
 		return amountCollected;
 	}
-
 }

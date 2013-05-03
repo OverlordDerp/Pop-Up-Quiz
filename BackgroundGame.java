@@ -127,10 +127,12 @@ public class BackgroundGame extends JPanel implements KeyListener {
 
 
 								// Execute cycling methdos
-								g.cycle();
+								if (!isPaused && !isOver) {
+									g.cycle();
+								}
 
 							}
-							if (isStarted) {
+							if (isStarted && !isOver && !isPaused) {
 								gameCycle();
 							}
 						}
@@ -177,10 +179,12 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	public void keyReleased(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
-				rb.setAccel(new Point2D.Double(0, 0));
+				if (!isPaused && !isOver)
+					rb.setAccel(new Point2D.Double(0, 0));
 				break;
 			case KeyEvent.VK_RIGHT:
-				rb.setAccel(new Point2D.Double(0, 0));
+				if (!isPaused && !isOver)
+					rb.setAccel(new Point2D.Double(0, 0));
 				break;
 		}
 	}
@@ -188,10 +192,12 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
-				rb.setAccel(new Point2D.Double(-3, 0));
+				if (!isPaused && !isOver)
+					rb.setAccel(new Point2D.Double(-3, 0));
 				break;
 			case KeyEvent.VK_RIGHT:
-				rb.setAccel(new Point2D.Double(+3, 0));
+				if (!isPaused && !isOver)
+					rb.setAccel(new Point2D.Double(+3, 0));
 				break;
 
 			case KeyEvent.VK_ESCAPE:
@@ -200,6 +206,11 @@ public class BackgroundGame extends JPanel implements KeyListener {
 			case KeyEvent.VK_SPACE:
 				if (isStarted) {
 					togglePaused();
+				}
+				break;
+			case KeyEvent.VK_WINDOWS:
+				if (!isStarted) {
+					startGame();
 				}
 				break;
 		}
@@ -221,12 +232,12 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 */
 	public void paintComponent(Graphics g) {
 
-		
+
 		super.paintComponent(g);
-		
-				
+
+
 		// The background.
-		g.drawImage(sprites.get("grass"),0,0,getWidth(),getHeight(),null);
+		g.drawImage(sprites.get("grass"), 0, 0, getWidth(), getHeight(), null);
 
 		if (isOver) {
 			drawGameOverScreen(g);
@@ -251,6 +262,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	private double cpuUsage = 0;
 
 	public double getCpuUsage() {
+		if (cpuUsage > 100 ) {return 100;}
 		return cpuUsage;
 	}
 
@@ -356,8 +368,8 @@ public class BackgroundGame extends JPanel implements KeyListener {
 
 		dialog.setLocation(
 				(int) (Math.random() * (getWidth() - dialog.getWidth())),
-				(int) (Math.random() * getHeight()));
-
+				(int) (Math.random() * (getHeight() - dialog.getHeight())));
+/*
 
 		for (max = max; max >= 1; max--) {
 			test = choices.get((int) (Math.random() * max) + min);
@@ -365,7 +377,9 @@ public class BackgroundGame extends JPanel implements KeyListener {
 			System.out.println(choices.indexOf(test));
 			choices.remove(test);
 			System.out.println(max);
-		}
+		}*/
+		
+		increaseCpuUsage(2);
 	}
 
 	/**
@@ -373,7 +387,9 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 * @param g The graphics context
 	 */
 	private void drawTitleScreen(Graphics g) {
-		g.setColor(Color.BLACK);
+		g.setColor(new Color(0, 0x66, 0xcc, 150));
+		g.fillRect(0, 60, getWidth(), getHeight() - 120);
+		g.setColor(Color.WHITE);
 		g.setFont(new Font("Courier New", Font.BOLD, 30));
 		g.drawString("POP UP QUIZ!", 50, 100);
 		g.setFont(new Font("Courier New", Font.BOLD, 18));
@@ -399,7 +415,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		g.drawString("The CPU gauge will tell you how well you're doing!",
 				50, 420);
 		g.drawString("If your CPU usage goes over 100%, your computer goes kaput"
-				+ "and you lose! How long can you clean?", 50, 450);
+				+ " and you lose! How long can you clean?", 50, 450);
 
 		g.drawString("By the way, you'll have to answer questions from a barrage"
 				+ " of pop-up as you do this.", 50, 500);
@@ -441,6 +457,16 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 */
 	public void increaseCpuUsage(double val) {
 		cpuUsage += val;
+
+	}
+	
+	/**
+	 * Routine for ending the game (showing the blue-screen).
+	 */
+	public void endGame() {
+			isOver = true;
+			timeGameEnded = System.nanoTime();
+			removeAll();
 	}
 
 	/**
@@ -449,6 +475,9 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 */
 	public void decreaseCpuUsage(double val) {
 		cpuUsage -= val;
+		if (cpuUsage < 0) {
+			cpuUsage = 0;
+		}
 	}
 
 	/**
@@ -483,17 +512,63 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 * loop thread
 	 */
 	private void gameCycle() {
-		if (Math.random() < 0.1) {
+		// The first item is the recycle bin
+		RecycleBin rb = (RecycleBin) objects.get(0);
+		double r = Math.random();
+
+		// Exponential difficulty for each item collected
+		
+		
+		if (Math.pow(1.1, -0.002 * rb.getAmountCollected())  < r) {
+			makeDialog();
+		}
+
+		// Large items should be created less often later
+		if ((-2* Math.pow(3, 0.2 * -(rb.getAmountCollected() + 20)) + 0.9) < r) {
 
 			Sysfile foo = new Sysfile(getBounds(), Sysfile.Size.L);
-			synchronized (lock) {
-				objects.add(foo);
-			}
 			foo.setPosition(new Point2D.Double(
 					(int) (Math.random() * (getWidth() - foo.getAreaRect().width)),
 					10));
-			makeDialog();
+			synchronized (lock) {
+				objects.add(foo);
+			}
+		}
+		
+		// Smaller sysfiles are created more often the more itmes are collected
+		if (Math.pow(1.2, -0.002 * rb.getAmountCollected()) < r) {
 
+			Sysfile foo = new Sysfile(getBounds(), Sysfile.Size.M);
+			foo.setPosition(new Point2D.Double(
+					(int) (Math.random() * (getWidth() - foo.getAreaRect().width)),
+					10));
+			synchronized (lock) {
+				objects.add(foo);
+			}
+		}
+
+		if (Math.pow(2.0, -0.002 * rb.getAmountCollected()) < r) {
+
+			Sysfile foo = new Sysfile(getBounds(), Sysfile.Size.S);
+			foo.setPosition(new Point2D.Double(
+					(int) (Math.random() * (getWidth() - foo.getAreaRect().width)),
+					10));
+			synchronized (lock) {
+				objects.add(foo);
+			}
+		}
+
+
+
+		// Junk items are created regularly
+		if (Math.random() < 0.005) {
+			Junk bar = new Junk(getBounds());
+			bar.setPosition(new Point2D.Double(
+					(int) (Math.random() * (getWidth() - bar.getAreaRect().width)),
+					10));
+			synchronized (lock) {
+				objects.add(bar);
+			}
 		}
 	}
 
@@ -526,6 +601,18 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 * @param g Grahpics context
 	 */
 	private void drawGameOverScreen(Graphics g) {
+		g.setColor(Color.blue);
+		g.fillRect(0,0,getWidth(),getHeight());
+		g.setColor(Color.white);
+		g.setFont(new Font("Courier New", Font.PLAIN, 18));
+		g.drawString("A problem has been detected and your computer", 50, 30);
+		g.drawString("has been shut down to prevent damage to your computer.", 50, 60);
+		
+		g.drawString("OUT_OF_CPU_ERROR", 50, 120);
+		
+		g.drawString("Diagnostics", 50, 240);
+		g.drawString("Items Junked: " + ((RecycleBin)(objects.get(0))).getAmountCollected(), 50, 300);
+		g.drawString("Time Elapsed: " + (timeGameEnded - timeGameStarted)/1000000000.0 + " s", 50, 360);
 	}
 	/**
 	 * A dummy object used for synchronization. Used primarily to isolate
@@ -533,5 +620,6 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 * @link objects.
 	 */
 	private final Object lock = new Object();
-	
+
+	private long timeGameEnded;
 }

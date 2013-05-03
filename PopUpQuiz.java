@@ -68,23 +68,37 @@ public class PopUpQuiz extends JFrame {
 				});
 
 
-		// Loop that updates CPU
+		// Loop that updates the HUD
 		(new Thread(new Runnable() {
 
 			public void run() {
 				while (true) {
-					if (bg.isStarted() && !bg.isPaused()) {
+					if (bg.isStarted() && !bg.isPaused() && !bg.isOver()) {
 						h.setCpuUsage((int) bg.getCpuUsage());
 						h.setTime(System.nanoTime() - bg.getTimeGameStarted());
+						if (h.getStartButton().isEnabled()) {
+							h.getStartButton().setEnabled(false);
+						}
+					}
+					if (bg.getCpuUsage() >= 100 && bg.isOver() != true) {
+						bg.endGame();
+
+						System.out.println("Did it");
+						h.removeAll();
+						h.validate();
+						h.repaint();
+						break;
 					}
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 					}
-					
+
 				}
 			}
 		})).start();
+
+
 
 		validate();
 

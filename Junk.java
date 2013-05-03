@@ -5,7 +5,7 @@ class Junk extends GameObject {
 		super(bounds);
 		sprite = "junk";
 		
-		calculateCollRectFromSprite(sprite);
+		calculateCollRectFromSprite();
 		
 		collHandler = new CollHandler() {
 			public void to(Sysfile a) {}
@@ -14,7 +14,7 @@ class Junk extends GameObject {
 		};
 	}
 	
-	public void onCollide(GameObject g) {
+	public void collideWith(GameObject g) {
 		g.getCollHandler().to(this);
 	}
 }

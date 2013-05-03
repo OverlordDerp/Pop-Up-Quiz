@@ -18,6 +18,11 @@ abstract class GameObject {
 	}
 	
 	/**
+	 * This variable allows access to the BackgroundGame object
+	 */
+	public static BackgroundGame bgg;
+	
+	/**
 	 * The index of the sprite for the array of Images in @link 
 	 */
 	protected String sprite = null;
@@ -28,7 +33,7 @@ abstract class GameObject {
 	/**
 	 * Velocity in x and y direcitons.
 	 */
-	private Point2D.Double velocity;
+	protected Point2D.Double velocity;
 	/**
 	 * Position.
 	 */
@@ -62,15 +67,15 @@ abstract class GameObject {
 	 * This code takes the CollHandler of the other object, and calls the 
 	 * handler appropriate for this object. This way, handling collisions with
 	 * various objects can be handled through polymorphism rather than e.g.
-	 * object identifier properties.
+	 * object-identifying properties.
 	 * 
 	 * In other words, the CollHandler is the visitor
 	 * in the <em>visitor design pattern</em>.
 	 * 
-	 * Note that onCollide(g) calls g's handlers, not this object's.
+	 * Note that collideWith(g) calls g's handlers, not this object's.
 	 * @param g The other GameObject.
 	 */
-	public abstract void onCollide(GameObject g);
+	public abstract void collideWith(GameObject g);
 	
 	/**
 	 * Boundary within which to confine the object
@@ -136,11 +141,19 @@ abstract class GameObject {
 	}
 
 	/**
-	 * @param collRectOffset the collRectOffset to set
+	 * @param collRectOffset the new offset from the area rectangle
+	 * from which to calculate the collision rectangle
 	 */
 	public void setCollRectOffset(Rectangle collRectOffset) {
 		this.collRectOffset = collRectOffset;
 	}
+	
+	public Rectangle getCollRect() {
+		return new Rectangle((int) (position.x + collRectOffset.x),
+				(int) (position.y + collRectOffset.y),
+				collRectOffset.width, collRectOffset.height);
+	}
+	
 	
 	protected void applyAccel() {
 		velocity.x += accel.x;
@@ -161,14 +174,8 @@ abstract class GameObject {
 	 * and velocity. Should be in (0,1).
 	 */
 	protected void decelerate(double multiplier) {
-		double epsilon = 0;
-		/*
-		System.out.println("Acceleration: " + accel);
-		System.out.println("vx:" + velocity.x);
-		System.out.println("d ax: " + multiplier * -velocity.x);
-		*/
-		velocity.x *= multiplier;
-		velocity.y *= multiplier;
+		velocity.x *= (1 - multiplier);
+		velocity.y *= (1 - multiplier);
 	}
 	
 	/**
@@ -192,8 +199,13 @@ abstract class GameObject {
 		this.accel = accel;
 	}
 	
-	public void calculateCollRectFromSprite(String s) {
-		BufferedImage theSprite = BackgroundGame.sprites.get(s);
+	/**
+	 * Sets this object's collision rectangle offset to begin at
+	 * corner (0,0) and be the size of the given sprite
+	 * @param s A String identifying a sprite
+	 */
+	protected void calculateCollRectFromSprite() {
+		BufferedImage theSprite = bgg.getSprites().get(sprite);
 		collRectOffset = new Rectangle(0,0, 
 				theSprite.getWidth(), theSprite.getHeight());
 	}
@@ -266,4 +278,65 @@ abstract class GameObject {
 	 * The CollHandler that serves this object.
 	 */
 	protected CollHandler collHandler;
+
+	
+	/**
+	 * Moves g until it is within the given rectangle
+	 * @param r The rectangle in which to confine this object
+	 */
+	public void confine(Rectangle r) {
+		Rectangle areaRect = getAreaRect();
+		
+		if (bounds.contains(areaRect)) {
+			return;
+		}
+		
+		if (areaRect.x < bounds.x) {
+			areaRect.x = bounds.x;
+		}
+		else if (areaRect.x + areaRect.width > bounds.x + bounds.width) {
+			areaRect.x = bounds.x + bounds.width - areaRect.width;
+		}
+		
+		if (areaRect.y < bounds.y) {
+			areaRect.y = bounds.y;
+		}
+		else if (areaRect.y + areaRect.height > bounds.y + bounds.height) {
+			areaRect.y = bounds.y + bounds.height - areaRect.height;
+		}
+		
+		position = (new Point2D.Double(areaRect.x, areaRect.y));
+	}
+	
+	/**
+	 * Moves g until it is within the rectangle specified by @link bounds.
+	 */
+	public void confine() {
+		confine(bounds);
+	}
+	
+		
+	/**
+	 * Calculates the rectangle from the top-left corner of the object's sprite
+	 * to its bottom-right.
+	 * @param g The object
+	 * @return The area rectangle
+	 */
+	public Rectangle getAreaRect() {
+		BufferedImage s = bgg.getSprites().get(sprite);
+		if (s == null) {
+			return new Rectangle((int) position.x, (int)position.y, 0, 0);
+		}
+		else {
+			return new Rectangle((int)position.x, (int) position.y, s.getWidth(), s.getHeight());
+		}
+	}
+	
+	/**
+	 * Called when this object's area rectangle does not overlap this area's
+	 * bounding rectangle
+	 */
+	public void onOutOfBounds() {
+		confine();
+	}
 }

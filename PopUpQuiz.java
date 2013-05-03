@@ -12,6 +12,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JInternalFrame;
+import javax.swing.JDesktopPane;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +27,7 @@ import java.awt.Container;
 import java.awt.Toolkit;
 import java.awt.Dimension;
 
+import javax.swing.JOptionPane;
 /**
  * The main graphical class of the game.
  * @author quincy
@@ -69,64 +73,11 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 		})).start();
 		
 		validate();
-		
-		
-				char quot = 34;
-		int min = 0;
-		int max = 3;
-		String test;
-		ArrayList<String> choices = new ArrayList<String>(20);
 
-		choices.add(0, "When was the first " + quot + "Where's Waldo?" + quot + " book published?");
-		//Correct answer: 1987
-		choices.add(1, "How often are human brain cells replaced?");
-		//Correct answer: Never
-		choices.add(2, "What was Al Capone's nickname?");
-		//Correct Answer: Scarface
+
 		
-		final JDialog dialog = new JDialog(this,"Question!");
-		JLabel randQuestion = new JLabel (choices.get(0));
-		randQuestion.setHorizontalAlignment(JLabel.CENTER);
-		Font font = randQuestion.getFont();
-        randQuestion.setFont(randQuestion.getFont().deriveFont(font.PLAIN,14.0f));
-        JButton choice1 = new JButton("1986");
-        JButton choice2 = new JButton("1987");
-        JButton choice3 = new JButton("1984");
-        JButton choice4 = new JButton("1973");
-        choice1.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		dialog.setVisible(false);
-        		dialog.dispose();
-        	}
-        });
-        choice2.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		dialog.setVisible(false);
-        		dialog.dispose();
-        	}
-        });
-        choice3.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		dialog.setVisible(false);
-        		dialog.dispose();
-        	}
-        });
-        choice4.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		dialog.setVisible(false);
-        		dialog.dispose();
-        	}
-        });
-        
-        dialog.setVisible(true);
 		
-		for (max = max; max >= 1; max--) {
-			test = chooseRandomQuestion(min, max, choices);
-			System.out.println(test);
-			System.out.println(choices.indexOf(test));
-			choices.remove(test);
-			System.out.println(max);
-		}
+
 	}
 	
 	/**
@@ -150,11 +101,6 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 		
 	}
 	
-	public static String chooseRandomQuestion(int min, int max, ArrayList<String> C) {
-		int selection = (int) ((Math.random() * max));
-		return (C.get(selection));
-
-	}
 
 }
    

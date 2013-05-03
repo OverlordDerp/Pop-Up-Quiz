@@ -17,7 +17,7 @@ class RecycleBin extends GameObject {
 	public RecycleBin(Rectangle bounds) {
 		super(bounds);
 		sprite = "emptyBin";
-		calculateCollRectFromSprite(sprite);
+		calculateCollRectFromSprite();
 		
 		/**
 		 * The recycle bin should destroy every file it comes into contact with.
@@ -51,7 +51,7 @@ class RecycleBin extends GameObject {
 	 * @return whether the bin has collected any items
 	 */
 	public boolean isUsed() {
-		return amountCollected != 0;
+		return getAmountCollected() != 0;
 	}
 
 	
@@ -64,10 +64,19 @@ class RecycleBin extends GameObject {
 		super.applyVelocity();
 	}
 	
-
-	public void onCollide(GameObject g) {
+	
+	public void collideWith(GameObject g) {
 		g.getCollHandler().to(this);
 	}
 	
 	private long amountCollected = 0;
+
+	/**
+	 * @return the number of items collected by the garbage bin. Determines
+	 * the difficulty.
+	 */
+	public long getAmountCollected() {
+		return amountCollected;
+	}
+
 }

@@ -44,9 +44,11 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		setSize(d);
 		setFocusable(true);
 		setDoubleBuffered(true);
-		setBackground(Color.white);
-		GameObject.bgg = this;
 
+		//setBackground(Color.red);
+		
+		GameObject.bgg = this;
+	
 		sprites = new HashMap<>();
 		try {
 			loadSprites();
@@ -224,6 +226,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		return cpuUsage;
 	}
 
+
 	private void makeDialog() {
 		final BackgroundGame thisPanel = this;
 
@@ -373,4 +376,13 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	private final int logicFps = 60;
 	private long lastLogicCycleTime = 0;
 	private boolean isStarted = false;
+
+	
+	public void increaseCpuUsage(double val) {
+		cpuUsage += val;	
+	}
+	
+	public void decreaseCpuUsage(double val) {
+		cpuUsage -= val;
+	}
 }

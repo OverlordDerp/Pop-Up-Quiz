@@ -339,4 +339,5 @@ abstract class GameObject {
 	public void onOutOfBounds() {
 		confine();
 	}
+
 }

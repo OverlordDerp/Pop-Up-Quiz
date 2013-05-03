@@ -4,7 +4,6 @@
  * This class will create the application frame.
  * Quincy L, Vivian T, Aravind V
  */
-
 // Question Class + Random Question Selector
 import java.util.ArrayList;
 
@@ -28,11 +27,13 @@ import java.awt.Toolkit;
 import java.awt.Dimension;
 
 import javax.swing.JOptionPane;
+
 /**
  * The main graphical class of the game.
  * @author quincy
  */
-public class PopUpQuiz extends JFrame implements KeyListener {
+public class PopUpQuiz extends JFrame {
+
 	/**
 	 * The default constructor. 
 	 * After calling the base constructor, it sets up listeners for
@@ -43,64 +44,53 @@ public class PopUpQuiz extends JFrame implements KeyListener {
 		super();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(null);
-		
+
 		Container c = getContentPane();
-		
+
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		final HUD h = new HUD(screenSize);
 		c.add(h);
 		h.setLocation(0, (int) screenSize.getHeight() - HUD.taskbarHeight);
-		
-		
-		final BackgroundGame bg = new BackgroundGame(new Dimension( 
-				(int) screenSize.getWidth(), 
+
+		final BackgroundGame bg = new BackgroundGame(new Dimension(
+				(int) screenSize.getWidth(),
 				(int) screenSize.getHeight() - h.getTaskbarHeight()));
 		c.add(bg);
 		bg.addKeyListener(bg);
-		
+
+		h.getStartButton().addActionListener(
+				new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						bg.startGame();
+					}
+				});
+
+
 		// Loop that updates CPU
 		(new Thread(new Runnable() {
+
 			public void run() {
-				while(true) {
-					//h.setCpuUsage(bg.getCpuUsage());
-					h.setCpuUsage(20);
+				while (true) {
+					if (bg.isStarted() && !bg.isPaused()) {
+						h.setCpuUsage((int) bg.getCpuUsage());
+						h.setTime(System.nanoTime() - bg.getTimeGameStarted());
+					}
 					try {
 						Thread.sleep(1000);
-					} catch (InterruptedException e) 
-					{}
+					} catch (InterruptedException e) {
+					}
+					
 				}
 			}
 		})).start();
-		
+
 		validate();
 
 
-		
-		
+
+
 
 	}
-	
-	/**
-	 * Handles key press events. Principally, the frame closes if the user
-	 * presses Escape.
-	 * @param e The KeyEvent object.
-	 */
-	public void keyPressed(KeyEvent e) {
-		switch (e.getKeyCode()) {
-			case KeyEvent.VK_ESCAPE:
-				System.exit(0);
-			break;
-		}
-	}
-		
-	public void keyReleased(KeyEvent e) {
-		
-	}
-	
-	public void keyTyped(KeyEvent e) {
-		
-	}
-	
-
 }
-   

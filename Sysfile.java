@@ -6,9 +6,9 @@ class Sysfile extends GameObject {
 	public enum Size { S, M, L };
 	public Sysfile(Rectangle bounds, Size s) {
 		super(bounds);
-		// Some distance for the garbage to fall so it doesn't just
-		// vanish on-screen
-		bounds.height = bounds.height + 64;
+		// Some distance for (de)spawning offscreen
+		bounds.y -= 64;
+		bounds.height += 128;
 			
 		switch(s) {
 			case S:
@@ -30,7 +30,9 @@ class Sysfile extends GameObject {
 		collHandler = new CollHandler() {
 			public void to(Sysfile a) {}
 			public void to(Junk a) {}
-			public void to(RecycleBin a) {}
+			public void to(RecycleBin a) {
+				bgg.increaseCpuUsage(5);
+			}
 		};
 	}
 	

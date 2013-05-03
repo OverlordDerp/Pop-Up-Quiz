@@ -9,6 +9,8 @@ import java.awt.Rectangle;
 import java.awt.Font;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 /**
  * Draws the taskbar, the score, the CPU usage..... the heads-up display.
  * @author quincy
@@ -16,6 +18,7 @@ import javax.swing.JLabel;
 public class HUD extends JPanel {
 	private JButton startButton;
 	private JProgressBar cpuUsageBar;
+	private JLabel timeLabel;
 	
 	public static final int startButtonHeight = 20;
 	public static final int startButtonWidth = 80;
@@ -39,6 +42,11 @@ public class HUD extends JPanel {
 		startButton.setFocusable(false);
 		startButton.setBackground(new Color(0,0x99,0));
 		startButton.setForeground(Color.white);
+		startButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				startButton.setEnabled(false);
+			}
+		});
 		
 		JLabel label = new JLabel("CPU Usage: ");
 		add(label);
@@ -56,6 +64,14 @@ public class HUD extends JPanel {
 		cpuUsageBar.setSize(100,startButtonHeight);
 		// Progress (percent) string
 		cpuUsageBar.setStringPainted(true);
+		
+		timeLabel = new JLabel("00:00:00.000000");
+		add(timeLabel);
+		int width = 200;
+		timeLabel.setLocation((int)(getWidth() - width), startButtonPadding);
+		timeLabel.setForeground(Color.white);
+		timeLabel.setSize(width, startButtonHeight);
+		
 		
 		validate();
 	}
@@ -79,7 +95,39 @@ public class HUD extends JPanel {
 		return taskbarHeight;
 	}
 	
+	/**
+	 * Updates the CPU gauge
+	 * @param cpuUsage The new CPU usage reading.
+	 */
 	public void setCpuUsage(int cpuUsage) {
 		cpuUsageBar.setValue(cpuUsage);
+	}
+	
+	/**
+	 * Updates the time elapsed.
+	 * @param n Time elapsed in nanoseconds.
+	 */
+	public void setTime(long n) {
+		timeLabel.setText(formatNanoseconds(n));
+	}
+	
+	/**
+	 * Changes a nanosecond time into the following format:
+	 * hh:mm:ss.nnnnnnnnn
+	 * @param n 
+	 */
+	private String formatNanoseconds(long n) {
+		return String.format("%02d:%02d:%02d.%09d", n/3600000000000l,
+				(n%3600000000000l)/60000000000l, 
+				(n%60000000000l)/1000000000l, 
+				n%1000000000l);
+	}
+	
+	/**
+	 * Exposes the start button.
+	 * @return A JButton, the start button.
+	 */
+	public JButton getStartButton() {
+		return startButton;
 	}
 }

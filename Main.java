@@ -15,7 +15,6 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		PopUpQuiz frame = new PopUpQuiz();
-		frame.addKeyListener(frame);
 
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();

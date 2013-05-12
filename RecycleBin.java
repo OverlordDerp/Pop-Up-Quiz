@@ -19,9 +19,9 @@ class RecycleBin extends GameObject {
 	 * Sets the sprite to an empty bin, which becomes that of the
 	 * full bin once something has been collected.
 	 * 
-	 * RecycleBin has collision handlers for @link Sysfile and @link Junk.
-	 * When the recycle bin collides with a @link Sysfile, the CPU usage
-	 * is increased by 6. When @link Junk is collected, CPU usage decreases
+	 * RecycleBin has collision handlers for  Sysfile and  Junk.
+	 * When the recycle bin collides with a  Sysfile, the CPU usage
+	 * is increased by 6. When  Junk is collected, CPU usage decreases
 	 * by 5. In either case the object is consumed.
 	 * @param bounds 
 	 */

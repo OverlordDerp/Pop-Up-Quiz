@@ -32,15 +32,15 @@ public class HUD extends JPanel {
 	 */
 	private JLabel timeLabel;
 	/**
-	 * The height of @link startButton. Used in calculations.
+	 * The height of  startButton. Used in calculations.
 	 */
 	public static final int startButtonHeight = 20;
 	/**
-	 * The width of @link startButton. Used in calculations.
+	 * The width of  startButton. Used in calculations.
 	 */
 	public static final int startButtonWidth = 80;
 	/**
-	 * The height of the taskbar, equal to @link startButtonHeight plus 4px, or
+	 * The height of the taskbar, equal to  startButtonHeight plus 4px, or
 	 * 2px of padding above and below.
 	 */
 	public static final int taskbarHeight = startButtonHeight + 4;
@@ -155,7 +155,7 @@ public class HUD extends JPanel {
 
 	/**
 	 * Exposes the start button so that a handler to start the game can be
-	 * attached in the constructor of @link PopUpQuiz.
+	 * attached in the constructor of  PopUpQuiz.
 	 * @return A JButton, the start button.
 	 */
 	public JButton getStartButton() {

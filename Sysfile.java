@@ -8,7 +8,7 @@ import java.awt.geom.Point2D.Double;
  */
 class Sysfile extends GameObject {
 	/**
-	 * An enumeration for the three sizes of @link Sysfile
+	 * An enumeration for the three sizes of  Sysfile
 	 */
 	public enum Size { S, M, L };
 	/**

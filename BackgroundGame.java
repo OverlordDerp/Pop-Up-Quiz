@@ -47,7 +47,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 * - Calling handlers for when an object escapes its set boundaries
 	 * - Handles collisions (in separate threads)
 	 * - Calls the cycle() function of each GameObject
-	 * - Calls {@link gameCycle}
+	 * - Calls { gameCycle}
 	 * 
 	 * The bulk of the loop is in a synchronized block to prevent
 	 * concurrent modification and access of the list of GameObjects. 
@@ -307,7 +307,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 
 	/**
 	 * 
-	 * @return The value of @link cpuUsage
+	 * @return The value of  cpuUsage
 	 */
 	public double getCpuUsage() {
 		if (cpuUsage > 100 ) {return 100;}
@@ -482,7 +482,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	private final int logicFps = 60;
 	/**
 	 * Some number of nanoseconds representing a moment in the past 
-	 * when the logic loop was run. Used for pacing with @link logicFps.
+	 * when the logic loop was run. Used for pacing with  logicFps.
 	 */
 	private long lastLogicCycleTime = 0;
 	/**
@@ -699,8 +699,8 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	}
 	/**
 	 * A dummy object used for synchronization. Used primarily to isolate
-	 * adding GameObjects to @link objects and iterating through 
-	 * @link objects.
+	 * adding GameObjects to  objects and iterating through 
+	 *  objects.
 	 */
 	private final Object lock = new Object();
 

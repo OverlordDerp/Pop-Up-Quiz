@@ -38,7 +38,7 @@ public class PopUpQuiz extends JFrame {
 	 * After calling the base constructor, it sets up listeners for
 	 * key events. 
 	 * It waits for the end of the game.
-	 * It creates a thread that updates the @link HUD object.
+	 * It creates a thread that updates the  HUD object.
 	 */
 	public PopUpQuiz() {
 		super();

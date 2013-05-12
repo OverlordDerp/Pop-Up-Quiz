@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Main {
 
 	/**
-	 * Creates an instance of @link PopUpQuiz. Puts the game in full-screen
+	 * Creates an instance of  PopUpQuiz. Puts the game in full-screen
 	 * mode.
 	 * @param args Command line arguments.
 	 */

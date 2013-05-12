@@ -29,7 +29,7 @@ abstract class GameObject {
 	public static BackgroundGame bgg;
 	
 	/**
-	 * The index of the sprite for the array of Images in @link 
+	 * The index of the sprite for the array of Images in  
 	 */
 	protected String sprite = null;
 	/**
@@ -78,7 +78,7 @@ abstract class GameObject {
 	 * 
 	 * More technically, collision handlers have been implemented through
 	 * the <em>visitor design pattern</em>, where implementations of
-	 * @link CollHandler are the visitors.
+	 *  CollHandler are the visitors.
 	 * 
 	 * Note that collideWith(g) calls g's handlers, not this object's.
 	 * @param g The other GameObject.
@@ -157,7 +157,7 @@ abstract class GameObject {
 	}
 	
 	/**
-	 * Computes the object's collision rectangle from @link collRectOffset
+	 * Computes the object's collision rectangle from  collRectOffset
 	 * @return The collision rectangle of the object
 	 */
 	public Rectangle getCollRect() {
@@ -225,7 +225,7 @@ abstract class GameObject {
 	
 	/**
 	 * Holds values for position, velocity, and acceleration stored
-	 * through a call to @link stashKinematicsVars.
+	 * through a call to  stashKinematicsVars.
 	 */
 	HashMap<String, Point2D.Double> lastKinematicsVars;
 	
@@ -240,7 +240,7 @@ abstract class GameObject {
 	}
 	
 	/**
-	 * Restores the kinematics variables stored by @link stashKinematicVars.
+	 * Restores the kinematics variables stored by  stashKinematicVars.
 	 */
 	public void popKinematicsVars() {
 		position = lastKinematicsVars.get("position");
@@ -273,7 +273,7 @@ abstract class GameObject {
 	 * Child classes will implement this interface, overriding the various 
 	 * methods to be called on collision with various kinds of
 	 * GameObjects. Handlers are 
-	 * then linked to the object using @link addCollHandler. This allows
+	 * then linked to the object using  addCollHandler. This allows
 	 * the compiler to pick which handler to call since it is overloaded
 	 * for every type of GameObject
 	 */
@@ -327,7 +327,7 @@ abstract class GameObject {
 	}
 	
 	/**
-	 * Moves g until it is within the rectangle specified by @link bounds.
+	 * Moves g until it is within the rectangle specified by  bounds.
 	 */
 	public void confine() {
 		confine(bounds);

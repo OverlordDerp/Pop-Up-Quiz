@@ -14,17 +14,40 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Draws the taskbar, the score, the CPU usage..... the heads-up display.
+ * Draws the taskbar with the score, the CPU usage..... the heads-up display.
  * @author quincy
  */
 public class HUD extends JPanel {
-
+	/**
+	 * The button that... starts the game.
+	 */
 	private JButton startButton;
+	/**
+	 * A bar that displays the in-game CPU usage (indicating to the user
+	 * how close they are to defeat).
+	 */
 	private JProgressBar cpuUsageBar;
+	/**
+	 * Some text that displays the time elapsed to nanosecond precision.
+	 */
 	private JLabel timeLabel;
+	/**
+	 * The height of @link startButton. Used in calculations.
+	 */
 	public static final int startButtonHeight = 20;
+	/**
+	 * The width of @link startButton. Used in calculations.
+	 */
 	public static final int startButtonWidth = 80;
+	/**
+	 * The height of the taskbar, equal to @link startButtonHeight plus 4px, or
+	 * 2px of padding above and below.
+	 */
 	public static final int taskbarHeight = startButtonHeight + 4;
+	/**
+	 * Calculates the distance from the top of the taskbar at which to place
+	 * the start button. It's 2px.
+	 */
 	public static final int startButtonPadding = (taskbarHeight - startButtonHeight) / 2;
 
 	/**
@@ -121,7 +144,7 @@ public class HUD extends JPanel {
 	/**
 	 * Changes a nanosecond time into the following format:
 	 * hh:mm:ss.nnnnnnnnn
-	 * @param n 
+	 * @param n Time elapsed in nanoseconds
 	 */
 	private String formatNanoseconds(long n) {
 		return String.format("%02d:%02d:%02d.%09d", n / 3600000000000l,
@@ -131,7 +154,8 @@ public class HUD extends JPanel {
 	}
 
 	/**
-	 * Exposes the start button.
+	 * Exposes the start button so that a handler to start the game can be
+	 * attached in the constructor of @link PopUpQuiz.
 	 * @return A JButton, the start button.
 	 */
 	public JButton getStartButton() {

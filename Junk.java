@@ -1,13 +1,19 @@
 
 import java.awt.geom.Point2D.Double;
 import java.awt.Rectangle;
+
+/**
+ * A junk file. Increases the CPU usage as it stays on the screen.
+ * @author quincy
+ */
 class Junk extends GameObject {
+	/**
+	 * Creates the junk and gives it a bit of downwards
+	 * acceleration. 
+	 * @param bounds The boundary of the game that created it. 
+	 */
 	public Junk(Rectangle bounds) {
 		super(bounds);
-		// Some distance for the stuff to fall so it doesn't just
-		// appear on-screen
-		bounds.y -= 64;
-		bounds.height += 64;
 		
 		accel = new Double(0, 1.5);
 		
@@ -26,12 +32,17 @@ class Junk extends GameObject {
 		g.getCollHandler().to(this);
 	}
 	
+	/**
+	 * Increase CPU usage by 0.01 per iteration.
+	 */
 	public void cycle() {
 		super.cycle();
 		bgg.increaseCpuUsage(0.01);
 	}
 	
-	//Stay on-screen until collected.
+	/**
+	 * Keep the file on-screen once it has hit the bottom of its boundary.
+	 */
 	public void onOutOfBounds() {
 		confine();
 	}

@@ -30,13 +30,29 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 /**
- * The game in the background
+ * The clean-up game in the background whilst the popups appear
+ * in the foreground
  * @author quincy
  */
 public class BackgroundGame extends JPanel implements KeyListener {
 
 	/**
-	 * The constructor
+	 * The constructor. Loads all of the sprites. Creates the recycle bin
+	 * for the user to play with even before starting the game. Initializes
+	 * the list of GameObjects. 
+	 * 
+	 * Begins a game loop in a separate thread. This loop processes:
+	 * - Running time
+	 * - Removal of GameObjects marked for removal
+	 * - Calling handlers for when an object escapes its set boundaries
+	 * - Handles collisions (in separate threads)
+	 * - Calls the cycle() function of each GameObject
+	 * - Calls {@link gameCycle}
+	 * 
+	 * The bulk of the loop is in a synchronized block to prevent
+	 * concurrent modification and access of the list of GameObjects. 
+	 * 
+	 * Also begins a paint thread for continuous redrawing.
 	 * @param d The size of the game. 
 	 */
 	public BackgroundGame(Dimension d) {
@@ -157,25 +173,39 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	}
 
 	/**
-	 * @return the sprites
+	 * @return A map of string identifiers to BufferedImages
 	 */
 	public HashMap<String, BufferedImage> getSprites() {
 		return sprites;
 	}
 
 	/**
-	 * @return the timeGameStarted
+	 * @return A nano-second moment representing when the game started
 	 */
 	public long getTimeGameStarted() {
 		return timeGameStarted;
 	}
+	/**
+	 * The sole RecyclingBin object in the game
+	 */
 	private RecycleBin rb;
+	/**
+	 * A map of string identifiers to BufferedImages
+	 */
 	private HashMap<String, BufferedImage> sprites;
+	/**
+	 * A list of all of the GameObjects. Iterated through in the game loop.
+	 */
 	private ArrayList<GameObject> objects;
 
 	public void keyTyped(KeyEvent e) {
 	}
 
+	/**
+	 * Remove the acceleration from the RecycleBin when the arrow keys are
+	 * released.
+	 * @param e The KeyEvent object
+	 */
 	public void keyReleased(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
@@ -189,6 +219,12 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		}
 	}
 
+	/**
+	 * Gives the recycle bin acceleration on depression of the left or right
+	 * arrow keys. Space pauses, and escape closes. The Windows key will
+	 * start the game too, fitting in with the Windows XP look-and-feel.
+	 * @param e The KeyEvent object
+	 */
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
@@ -216,6 +252,10 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		}
 	}
 
+	/**
+	 * Loads all of the requisite images from the working directory, 7 in all.
+	 * @throws IOException 
+	 */
 	private void loadSprites() throws IOException {
 		sprites.put("fullBin", ImageIO.read(new File("user-trash-full64.png")));
 		sprites.put("emptyBin", ImageIO.read(new File("user-trash64.png")));
@@ -259,13 +299,26 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		}
 
 	}
+	
+	/**
+	 * A number which if exceeding 100 will cause the loss of the game
+	 */
 	private double cpuUsage = 0;
 
+	/**
+	 * 
+	 * @return The value of @link cpuUsage
+	 */
 	public double getCpuUsage() {
 		if (cpuUsage > 100 ) {return 100;}
 		return cpuUsage;
 	}
 
+	//ArrayList<Question> questions;
+	
+	/**
+	 * Create a pop-up question. Called repeatedly.
+	 */
 	private void makeDialog() {
 		final BackgroundGame thisPanel = this;
 
@@ -509,7 +562,35 @@ public class BackgroundGame extends JPanel implements KeyListener {
 
 	/**
 	 * What to do whilst the game is running. Called in the background
-	 * loop thread
+	 * loop thread. This method is strictly for things specific to each game.
+	 * e.g. Collision detection which is universal does not go here. Creation
+	 * of the junk items and popups does go here.
+	 * 
+	 * The difficulty increases exponentially as the recycling bin collects
+	 * more objects. Let n be the number of objects collected. Then the 
+	 * chance of a popup being created during a call of gameCycle is
+	 * 
+	 * (1 - 1.1<sup>-0.002n</sup>) in 1.
+	 * 
+	 * That of a large sysfile being created is
+	 * 
+	 * (0.1 + (2)3<sup>-0.2(n+20)</sup>) in 1.
+	 * 
+	 * For a medium sysfile, it's
+	 * 
+	 * (1 - 1.2<sup>-0.002n</sup>) in 1.
+	 * 
+	 * For the smallest one, it's
+	 * 
+	 * (1 - 2<sup>-0.002n</sup>) in 1.
+	 * 
+	 * Basically, smaller items are created more frequently later in the game,
+	 * whilst the large item is created less frequently and eventually vanishes.
+	 * 
+	 * Finally, junk items have a set frequency of 0.005 in 1, or about 1 in
+	 * 200 iterations.
+	 * 
+	 * All of these functions were chosen by experimentation.
 	 */
 	private void gameCycle() {
 		// The first item is the recycle bin
@@ -529,7 +610,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 			Sysfile foo = new Sysfile(getBounds(), Sysfile.Size.L);
 			foo.setPosition(new Point2D.Double(
 					(int) (Math.random() * (getWidth() - foo.getAreaRect().width)),
-					10));
+					-63));
 			synchronized (lock) {
 				objects.add(foo);
 			}
@@ -613,6 +694,8 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		g.drawString("Diagnostics", 50, 240);
 		g.drawString("Items Junked: " + ((RecycleBin)(objects.get(0))).getAmountCollected(), 50, 300);
 		g.drawString("Time Elapsed: " + (timeGameEnded - timeGameStarted)/1000000000.0 + " s", 50, 360);
+		
+		g.drawString("Press <Esc> to power down.", 50, 400);
 	}
 	/**
 	 * A dummy object used for synchronization. Used primarily to isolate
@@ -621,5 +704,8 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 */
 	private final Object lock = new Object();
 
+	/**
+	 * A nanosecond moment representing when the game was lost.
+	 */
 	private long timeGameEnded;
 }

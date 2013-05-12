@@ -1,10 +1,9 @@
 
-/*
+/**
  * Pop-Up-Quiz
  * This class will create the application frame.
- * Quincy L, Vivian T, Aravind V
+ * @author quincy
  */
-// Question Class + Random Question Selector
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -37,8 +36,9 @@ public class PopUpQuiz extends JFrame {
 	/**
 	 * The default constructor. 
 	 * After calling the base constructor, it sets up listeners for
-	 * key events and close events.
-	 * Stuff concerning full-screen is done in @link Main.main.
+	 * key events. 
+	 * It waits for the end of the game.
+	 * It creates a thread that updates the @link HUD object.
 	 */
 	public PopUpQuiz() {
 		super();

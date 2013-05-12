@@ -14,7 +14,17 @@ import java.awt.Point;
  * @author quincy
  */
 class RecycleBin extends GameObject {
-
+	/**
+	 * The constructor. 
+	 * Sets the sprite to an empty bin, which becomes that of the
+	 * full bin once something has been collected.
+	 * 
+	 * RecycleBin has collision handlers for @link Sysfile and @link Junk.
+	 * When the recycle bin collides with a @link Sysfile, the CPU usage
+	 * is increased by 6. When @link Junk is collected, CPU usage decreases
+	 * by 5. In either case the object is consumed.
+	 * @param bounds 
+	 */
 	public RecycleBin(Rectangle bounds) {
 		super(bounds);
 		sprite = "emptyBin";
@@ -33,7 +43,7 @@ class RecycleBin extends GameObject {
 				if (isUsed() && !sprite.equals("fullBin")) {
 					sprite = "fullBin";
 				}
-				bgg.increaseCpuUsage(1);
+				bgg.increaseCpuUsage(6);
 			}
 
 			public void to(Junk a) {
@@ -59,8 +69,10 @@ class RecycleBin extends GameObject {
 		return getAmountCollected() != 0;
 	}
 
-	/**addActi
-	 * Every cycle, decelerates the recycle bin.
+	/**
+	 * Every cycle, decelerates the recycle bin according to how many
+	 * items have been collected. The higher the amount collected, the slower
+	 * the deceleration. This is construed as "momentum".
 	 */
 	public void cycle() {
 
@@ -70,9 +82,14 @@ class RecycleBin extends GameObject {
 		super.applyVelocity();
 	}
 
+
 	public void collideWith(GameObject g) {
 		g.getCollHandler().to(this);
 	}
+	
+	/**
+	 * The number of items collected.
+	 */
 	private long amountCollected = 0;
 
 	/**

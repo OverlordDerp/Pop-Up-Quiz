@@ -1,13 +1,19 @@
-/**
- * The base class of all in-game objects that interact with each other.
- */
+
 import java.awt.geom.Point2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
+/**
+ * The base class of all in-game objects that interact with each other.
+ * @author quincy
+ */
 abstract class GameObject {
+	/**
+	 * Constructs a GameObject at rest.
+	 * @param bounds The boundaries of the GameObject's movement
+	 */
 	public GameObject(Rectangle bounds) {
 		position = new Point2D.Double(0,0);
 		accel = new Point2D.Double(0,0);
@@ -66,11 +72,13 @@ abstract class GameObject {
 	 * 
 	 * This code takes the CollHandler of the other object, and calls the 
 	 * handler appropriate for this object. This way, handling collisions with
-	 * various objects can be handled through polymorphism rather than e.g.
-	 * object-identifying properties.
+	 * various objects can be handled using overloading rather than e.g.
+	 * object-identifying properties. The advantage is that the decision of
+	 * which handler to call can be decided at compile-time.
 	 * 
-	 * In other words, the CollHandler is the visitor
-	 * in the <em>visitor design pattern</em>.
+	 * More technically, collision handlers have been implemented through
+	 * the <em>visitor design pattern</em>, where implementations of
+	 * @link CollHandler are the visitors.
 	 * 
 	 * Note that collideWith(g) calls g's handlers, not this object's.
 	 * @param g The other GameObject.
@@ -92,7 +100,7 @@ abstract class GameObject {
 	
 	/**
 	 * Sets the boundary of the object's position
-	 * @param The new boundary of the object's position
+	 * @param b The new boundary of the object's position
 	 */
 	public void setBounds(Rectangle b) {
 		bounds = b;
@@ -148,13 +156,19 @@ abstract class GameObject {
 		this.collRectOffset = collRectOffset;
 	}
 	
+	/**
+	 * Computes the object's collision rectangle from @link collRectOffset
+	 * @return The collision rectangle of the object
+	 */
 	public Rectangle getCollRect() {
 		return new Rectangle((int) (position.x + collRectOffset.x),
 				(int) (position.y + collRectOffset.y),
 				collRectOffset.width, collRectOffset.height);
 	}
 	
-	
+	/**
+	 * Adds the components of the object's acceleration to its velocity
+	 */
 	protected void applyAccel() {
 		velocity.x += accel.x;
 		velocity.y += accel.y;
@@ -202,7 +216,6 @@ abstract class GameObject {
 	/**
 	 * Sets this object's collision rectangle offset to begin at
 	 * corner (0,0) and be the size of the given sprite
-	 * @param s A String identifying a sprite
 	 */
 	protected void calculateCollRectFromSprite() {
 		BufferedImage theSprite = bgg.getSprites().get(sprite);
@@ -226,6 +239,9 @@ abstract class GameObject {
 		lastKinematicsVars.put("accel", (Point2D.Double) accel.clone());
 	}
 	
+	/**
+	 * Restores the kinematics variables stored by @link stashKinematicVars.
+	 */
 	public void popKinematicsVars() {
 		position = lastKinematicsVars.get("position");
 		setVelocity(lastKinematicsVars.get("velocity"));
@@ -255,9 +271,11 @@ abstract class GameObject {
 	
 	/**
 	 * Child classes will implement this interface, overriding the various 
-	 * methods to be called on collision with various objects. Handlers are 
+	 * methods to be called on collision with various kinds of
+	 * GameObjects. Handlers are 
 	 * then linked to the object using @link addCollHandler. This allows
-	 * the compiler to pick which method to be called
+	 * the compiler to pick which handler to call since it is overloaded
+	 * for every type of GameObject
 	 */
 	protected interface CollHandler {
 		void to(RecycleBin a);
@@ -267,8 +285,8 @@ abstract class GameObject {
 	
 	/**
 	 * Sets this object's collision handler object.
-	 * @param c Object that defines functions to be called on collision with
-	 * other GameObjects
+	 * @param c Object that defines handlers to be called on collision with
+	 * other types of GameObjects
 	 */
 	public void setCollHandler(CollHandler c) {
 		collHandler = c;
@@ -319,8 +337,6 @@ abstract class GameObject {
 	/**
 	 * Calculates the rectangle from the top-left corner of the object's sprite
 	 * to its bottom-right.
-	 * @param g The object
-	 * @return The area rectangle
 	 */
 	public Rectangle getAreaRect() {
 		BufferedImage s = bgg.getSprites().get(sprite);

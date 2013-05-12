@@ -83,7 +83,7 @@ public class PopUpQuiz extends JFrame {
 					if (bg.getCpuUsage() >= 100 && bg.isOver() != true) {
 						bg.endGame();
 
-						System.out.println("Did it");
+						//System.out.println("Did it");
 						h.removeAll();
 						h.validate();
 						h.repaint();

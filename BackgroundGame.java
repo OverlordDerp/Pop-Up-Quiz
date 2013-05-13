@@ -266,6 +266,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 				if (isStarted && !isOver) {
 					togglePaused();
 				}
+				e.consume();
 				break;
 			case KeyEvent.VK_WINDOWS:
 				if (!isStarted) {

@@ -263,7 +263,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 				System.exit(0);
 				break;
 			case KeyEvent.VK_SPACE:
-				if (isStarted) {
+				if (isStarted && !isOver) {
 					togglePaused();
 				}
 				break;

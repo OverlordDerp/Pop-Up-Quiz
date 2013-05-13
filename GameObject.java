@@ -20,7 +20,7 @@ abstract class GameObject {
 		velocity = new Point2D.Double(0,0);
 		this.bounds = (Rectangle) bounds.clone();
 		
-		lastKinematicsVars = new HashMap<>();
+		lastKinematicsVars = new HashMap<String, Point2D.Double>();
 	}
 	
 	/**

@@ -72,7 +72,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 
 		GameObject.bgg = this;
 
-		sprites = new HashMap<>();
+		sprites = new HashMap<String, BufferedImage>();
 		try {
 			loadSprites();
 		} catch (IOException e) {
@@ -268,11 +268,14 @@ public class BackgroundGame extends JPanel implements KeyListener {
 				}
 				e.consume();
 				break;
+                            /*
 			case KeyEvent.VK_WINDOWS:
 				if (!isStarted) {
 					startGame();
 				}
 				break;
+                                 * 
+                                 */
 		}
 	}
 
@@ -474,7 +477,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 				+ " of pop-up as you do this.", 50, 500);
 		g.drawString("Serves you right for not being clean!!!", 50, 530);
 
-		g.drawString("PUSH START TO BEGIN_", 50, 600);
+		g.drawString("CLICK START TO BEGIN_", 50, 600);
 	}
 	/**
 	 * How many cycles of game logic to execute per second
@@ -728,7 +731,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 * @throws FileNotFoundException 
 	 */
 	private void loadQuestions() throws IOException, FileNotFoundException {
-		questions = new ArrayList<>();
+		questions = new ArrayList<Question>();
 
 		BufferedReader br = new BufferedReader(new FileReader("QuestionBank.txt"));
 

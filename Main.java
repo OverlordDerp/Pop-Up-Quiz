@@ -17,14 +17,12 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		PopUpQuiz frame = new PopUpQuiz();
-		
 
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();
 		gd.setFullScreenWindow(frame);
 		
-		frame.setUndecorated(false);
-		frame.setResizable(false);
+		
 		
 		frame.setVisible(true);
 

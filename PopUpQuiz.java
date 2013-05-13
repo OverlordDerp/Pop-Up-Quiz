@@ -44,6 +44,8 @@ public class PopUpQuiz extends JFrame {
 		super();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(null);
+		setUndecorated(true);
+		setResizable(false);
 
 		Container c = getContentPane();
 

@@ -62,11 +62,11 @@ class RecycleBin extends GameObject {
 	}
 
 	/**
-	 * 
-	 * @return whether the bin has collected any items
+	 * Checks if the bin has collected anything.
+	 * @return true if the bin has collected any items
 	 */
 	public boolean isUsed() {
-		return getAmountCollected() != 0;
+		return amountCollected != 0;
 	}
 
 	/**
@@ -93,8 +93,8 @@ class RecycleBin extends GameObject {
 	private long amountCollected = 0;
 
 	/**
-	 * @return the number of items collected by the garbage bin. Determines
-	 * the difficulty.
+	 * Returns the number of items collected. Determines the difficulty.
+	 * @return the number of items collected by the garbage bin. 
 	 */
 	public long getAmountCollected() {
 		return amountCollected;

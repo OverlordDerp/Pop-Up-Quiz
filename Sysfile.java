@@ -8,9 +8,21 @@ import java.awt.geom.Point2D.Double;
  */
 class Sysfile extends GameObject {
 	/**
-	 * An enumeration for the three sizes of  Sysfile
+	 * An enumeration for the three sizes of Sysfile
 	 */
-	public enum Size { S, M, L };
+	public enum Size { 
+		/**
+		 * Small size. The sprite is a little gear.
+		 */
+		S, 
+		/**
+		 * Medium size. The sprite is a diamond with gears in it.
+		 */
+		M, 
+		/**
+		 * Large size. The sprite is a document with a wrench.
+		 */
+		L };
 	/**
 	 * Modifies the bounds to the object despawns off-screeen. This object's
 	 * collision handlers are empty.

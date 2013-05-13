@@ -19,7 +19,7 @@ import java.awt.event.ActionListener;
  */
 public class HUD extends JPanel {
 	/**
-	 * The button that... starts the game.
+	 * The button that, well, starts the game.
 	 */
 	private JButton startButton;
 	/**

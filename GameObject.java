@@ -107,20 +107,23 @@ abstract class GameObject {
 	}
 
 	/**
-	 * @return the position
+	 * Returns the position of the object
+	 * @return the position of the object
 	 */
 	public Point2D.Double getPosition() {
 		return new Point2D.Double(position.x, position.y);
 	}
 
 	/**
-	 * @param position the position to set
+	 * The new position of the object.
+	 * @param position This object's new position
 	 */
 	public void setPosition(Point2D.Double position) {
 		this.position = position;
 	}
 
 	/**
+	 * Returns the String identifier of the object's sprite
 	 * @return the sprite identifier
 	 */
 	public String getSprite() {
@@ -128,6 +131,7 @@ abstract class GameObject {
 	}
 
 	/**
+	 * Sets the identifier to tihs object's new sprite.
 	 * @param sprite the new sprite identifier
 	 */
 	public void setSprite(String sprite) {
@@ -142,7 +146,10 @@ abstract class GameObject {
 	}
 
 	/**
-	 * @return the collRectOffset
+	 * Returns the collision rectangle offset
+	 * @return A rectangle containing an offset from the top-left corner 
+	 * of the object's sprite, and a length and a width, to represent the
+	 * collision rectangle of the object
 	 */
 	public Rectangle getCollRectOffset() {
 		return new Rectangle(collRectOffset);
@@ -200,14 +207,16 @@ abstract class GameObject {
 	}
 
 	/**
-	 * @return the accel
+	 * Accesses the acceleration.
+	 * @return the acceleration of the object.
 	 */
 	public Point2D.Double getAccel() {
 		return accel;
 	}
 
 	/**
-	 * @param accel the accel to set
+	 * Sets this object's acceleration.
+	 * @param accel The new acceleration.
 	 */
 	public void setAccel(Point2D.Double accel) {
 		this.accel = accel;
@@ -249,6 +258,7 @@ abstract class GameObject {
 	}
 
 	/**
+	 * Returns the velocity of the object
 	 * @return the velocity
 	 */
 	public Point2D.Double getVelocity() {
@@ -256,14 +266,17 @@ abstract class GameObject {
 	}
 
 	/**
-	 * @param velocity the velocity to set
+	 * Sets this object's velocity.
+	 * @param velocity The object's new velocity
 	 */
 	public void setVelocity(Point2D.Double velocity) {
 		this.velocity = velocity;
 	}
 
 	/**
-	 * @return the collHandler
+	 * Returns the CollHandler object associated with this object. Called
+	 * exclusively by other GameObjects' collideWith methods.
+	 * @return the CollHandler object associated with this object.
 	 */
 	public CollHandler getCollHandler() {
 		return collHandler;
@@ -278,8 +291,20 @@ abstract class GameObject {
 	 * for every type of GameObject
 	 */
 	protected interface CollHandler {
+		/**
+		 * What to do on collision with a RecycleBin instance
+		 * @param a The RecycleBin collided into
+		 */
 		void to(RecycleBin a);
+		/**
+		 * What to do on collision with a Junk instance
+		 * @param a The Junk collided into
+		 */
 		void to(Junk a);
+		/**
+		 * What to do on collision with a Sysfile instance
+		 * @param a The Sysfile collided into
+		 */
 		void to(Sysfile a);
 	}
 	

@@ -1,4 +1,5 @@
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JPanel;
 import java.awt.Dimension;
@@ -26,6 +27,11 @@ import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import javax.swing.BoxLayout;
+import javax.swing.SwingConstants;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
@@ -70,7 +76,18 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		try {
 			loadSprites();
 		} catch (IOException e) {
-			System.out.println(e);
+			System.err.println(e);
+			System.exit(-1);
+		}
+
+		try {
+			loadQuestions();
+		} catch (FileNotFoundException e) {
+			System.err.println(e);
+			System.err.println("The file is called QuestionBank.txt!");
+			System.exit(-1);
+		} catch (IOException e) {
+			System.err.println(e);
 			System.exit(-1);
 		}
 
@@ -173,6 +190,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	}
 
 	/**
+	 * Accesses the sprites member.
 	 * @return A map of string identifiers to BufferedImages
 	 */
 	public HashMap<String, BufferedImage> getSprites() {
@@ -180,6 +198,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	}
 
 	/**
+	 * Accesses the timeGameStarted member.
 	 * @return A nano-second moment representing when the game started
 	 */
 	public long getTimeGameStarted() {
@@ -209,12 +228,14 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	public void keyReleased(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
-				if (!isPaused && !isOver)
+				if (!isPaused && !isOver) {
 					rb.setAccel(new Point2D.Double(0, 0));
+				}
 				break;
 			case KeyEvent.VK_RIGHT:
-				if (!isPaused && !isOver)
+				if (!isPaused && !isOver) {
 					rb.setAccel(new Point2D.Double(0, 0));
+				}
 				break;
 		}
 	}
@@ -228,12 +249,14 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
-				if (!isPaused && !isOver)
+				if (!isPaused && !isOver) {
 					rb.setAccel(new Point2D.Double(-3, 0));
+				}
 				break;
 			case KeyEvent.VK_RIGHT:
-				if (!isPaused && !isOver)
+				if (!isPaused && !isOver) {
 					rb.setAccel(new Point2D.Double(+3, 0));
+				}
 				break;
 
 			case KeyEvent.VK_ESCAPE:
@@ -299,43 +322,28 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		}
 
 	}
-	
 	/**
 	 * A number which if exceeding 100 will cause the loss of the game
 	 */
 	private double cpuUsage = 0;
 
 	/**
-	 * 
-	 * @return The value of  cpuUsage
+	 * Accesses the cpuUsage variable. Used to update the metre in the HUD.
+	 * @return The current CPU usage or 100, whichever is least
 	 */
 	public double getCpuUsage() {
-		if (cpuUsage > 100 ) {return 100;}
+		if (cpuUsage > 100) {
+			return 100;
+		}
 		return cpuUsage;
 	}
 
 	//ArrayList<Question> questions;
-	
 	/**
 	 * Create a pop-up question. Called repeatedly.
 	 */
 	private void makeDialog() {
 		final BackgroundGame thisPanel = this;
-
-
-		char quot = 34;
-		int min = 0;
-		int max = 3;
-		String test;
-		ArrayList<String> choices = new ArrayList<String>(20);
-
-		choices.add(0, "When was the first " + quot + "Where's Waldo?" + quot + " book published?");
-		//Correct answer: 1987
-		choices.add(1, "How often are human brain cells replaced?");
-		//Correct answer: Never
-		choices.add(2, "What was Al Capone's nickname?");
-		//Correct Answer: Scarface
-
 
 		final JInternalFrame dialog = new JInternalFrame("Question!");
 		dialog.addInternalFrameListener(new InternalFrameListener() {
@@ -369,51 +377,42 @@ public class BackgroundGame extends JPanel implements KeyListener {
 			public void internalFrameDeactivated(InternalFrameEvent arg0) {
 			}
 		});
-		JLabel randQuestion = new JLabel(choices.get(0));
-		randQuestion.setHorizontalAlignment(JLabel.CENTER);
-		Font font = randQuestion.getFont();
-		randQuestion.setFont(randQuestion.getFont().deriveFont(font.PLAIN, 14.0f));
-		JButton choice1 = new JButton("1986");
-		JButton choice2 = new JButton("1987");
-		JButton choice3 = new JButton("1984");
-		JButton choice4 = new JButton("1973");
+
+		Question randQuestion = questions.get(
+				(int) (Math.random() * questions.size()));
+
+		JLabel label = new JLabel(randQuestion.getQuestion());
+		label.setHorizontalAlignment(SwingConstants.LEFT);
+		Font font = label.getFont();
+		label.setFont(label.getFont().deriveFont(font.PLAIN, 14.0f));
 
 		JPanel a = new JPanel();
-		a.add(choice1);
-		a.add(choice2);
-		a.add(choice3);
-		a.add(choice4);
+		a.setLayout(new BoxLayout(a, BoxLayout.Y_AXIS));
+		a.add(label);
+		
+		JPanel choicesPanel = new JPanel();
+		for (int i = 1; i <= 4; ++i) {
+			String choice = randQuestion.getChoice(i);
+			JButton button = new JButton();
+			if (randQuestion.answerIs(choice)) {
+				//Remove the "--" marker
+				choice = choice.substring(0, choice.indexOf("--"));
+				
+				button.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dialog.setVisible(false);
+						dialog.dispose();
+					}
+				});
+
+			}
+							
+			button.setText(choice);
+			choicesPanel.add(button);
+		}
+		a.add(choicesPanel);
+
 		dialog.setContentPane(a);
-
-		choice1.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				dialog.setVisible(false);
-				dialog.dispose();
-			}
-		});
-		choice2.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				dialog.setVisible(false);
-				dialog.dispose();
-			}
-		});
-		choice3.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				dialog.setVisible(false);
-				dialog.dispose();
-			}
-		});
-		choice4.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				dialog.setVisible(false);
-				dialog.dispose();
-			}
-		});
-
 
 		dialog.pack();
 		dialog.setVisible(true);
@@ -422,16 +421,16 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		dialog.setLocation(
 				(int) (Math.random() * (getWidth() - dialog.getWidth())),
 				(int) (Math.random() * (getHeight() - dialog.getHeight())));
-/*
-
-		for (max = max; max >= 1; max--) {
-			test = choices.get((int) (Math.random() * max) + min);
-			System.out.println(test);
-			System.out.println(choices.indexOf(test));
-			choices.remove(test);
-			System.out.println(max);
-		}*/
+		/*
 		
+		for (max = max; max >= 1; max--) {
+		test = choices.get((int) (Math.random() * max) + min);
+		System.out.println(test);
+		System.out.println(choices.indexOf(test));
+		choices.remove(test);
+		System.out.println(max);
+		}*/
+
 		increaseCpuUsage(2);
 	}
 
@@ -512,14 +511,15 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		cpuUsage += val;
 
 	}
-	
+
 	/**
 	 * Routine for ending the game (showing the blue-screen).
 	 */
 	public void endGame() {
-			isOver = true;
-			timeGameEnded = System.nanoTime();
-			removeAll();
+		isOver = true;
+		timeGameEnded = System.nanoTime();
+		removeAll();
+		requestFocusInWindow();
 	}
 
 	/**
@@ -598,24 +598,24 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		double r = Math.random();
 
 		// Exponential difficulty for each item collected
-		
-		
-		if (Math.pow(1.1, -0.002 * rb.getAmountCollected())  < r) {
+
+
+		if (Math.pow(1.1, -0.002 * rb.getAmountCollected()) < r) {
 			makeDialog();
 		}
 
 		// Large items should be created less often later
-		if ((-2* Math.pow(3, 0.2 * -(rb.getAmountCollected() + 20)) + 0.9) < r) {
+		if ((-2 * Math.pow(3, 0.2 * -(rb.getAmountCollected() + 20)) + 0.9) < r) {
 
 			Sysfile foo = new Sysfile(getBounds(), Sysfile.Size.L);
 			foo.setPosition(new Point2D.Double(
 					(int) (Math.random() * (getWidth() - foo.getAreaRect().width)),
-					-63));
+					10));
 			synchronized (lock) {
 				objects.add(foo);
 			}
 		}
-		
+
 		// Smaller sysfiles are created more often the more itmes are collected
 		if (Math.pow(1.2, -0.002 * rb.getAmountCollected()) < r) {
 
@@ -683,18 +683,18 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 */
 	private void drawGameOverScreen(Graphics g) {
 		g.setColor(Color.blue);
-		g.fillRect(0,0,getWidth(),getHeight());
+		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.white);
 		g.setFont(new Font("Courier New", Font.PLAIN, 18));
 		g.drawString("A problem has been detected and your computer", 50, 30);
 		g.drawString("has been shut down to prevent damage to your computer.", 50, 60);
-		
+
 		g.drawString("OUT_OF_CPU_ERROR", 50, 120);
-		
+
 		g.drawString("Diagnostics", 50, 240);
-		g.drawString("Items Junked: " + ((RecycleBin)(objects.get(0))).getAmountCollected(), 50, 300);
-		g.drawString("Time Elapsed: " + (timeGameEnded - timeGameStarted)/1000000000.0 + " s", 50, 360);
-		
+		g.drawString("Items Junked: " + ((RecycleBin) (objects.get(0))).getAmountCollected(), 50, 300);
+		g.drawString("Time Elapsed: " + (timeGameEnded - timeGameStarted) / 1000000000.0 + " s", 50, 360);
+
 		g.drawString("Press <Esc> to power down.", 50, 400);
 	}
 	/**
@@ -703,9 +703,51 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 *  objects.
 	 */
 	private final Object lock = new Object();
-
 	/**
 	 * A nanosecond moment representing when the game was lost.
 	 */
 	private long timeGameEnded;
+	/**
+	 * List of questions that may appear in the pop-ups.
+	 */
+	private ArrayList<Question> questions;
+
+	/**
+	 * Loads the questions from QuestionBank.txt. The format is
+	 * 
+	 * Question
+	 * Choice
+	 * Choice
+	 * Choice
+	 * Choice
+	 * 
+	 * And the answer will be marked with two hyphens ("--"). Deviation
+	 * will cause an exception to be raised.
+	 * @throws IOException
+	 * @throws FileNotFoundException 
+	 */
+	private void loadQuestions() throws IOException, FileNotFoundException {
+		questions = new ArrayList<>();
+
+		BufferedReader br = new BufferedReader(new FileReader("QuestionBank.txt"));
+
+		String question;
+		String[] choices = new String[4];
+		int correctIndex = 0;
+
+		question = br.readLine();
+		while (question != null) {
+			for (byte i = 0; i < 4; ++i) {
+				choices[i] = br.readLine();
+				// -- marks the right answer
+				if (choices[i].indexOf("--") != -1) {
+					correctIndex = i;
+				}
+			}
+
+			questions.add(new Question(question, choices, correctIndex));
+			question = br.readLine();
+		}
+		br.close();
+	}
 }

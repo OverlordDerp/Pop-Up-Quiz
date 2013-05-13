@@ -13,7 +13,7 @@ public class Main {
 	/**
 	 * Creates an instance of  PopUpQuiz. Puts the game in full-screen
 	 * mode.
-	 * @param args Command line arguments.
+	 * @param args Command line arguments, which are disregarded.
 	 */
 	public static void main(String[] args) {
 		PopUpQuiz frame = new PopUpQuiz();

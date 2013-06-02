@@ -75,9 +75,7 @@ class RecycleBin extends GameObject {
 	 * the deceleration. This is construed as "momentum".
 	 */
 	public void cycle() {
-
-
-			super.decelerate((-0.1 * Math.log (0.01 * (amountCollected+1))) / 0.6);
+		super.decelerate(Math.max((-0.166 * Math.log (0.01 * (amountCollected+1))), 0.17));
 		super.applyAccel();
 		super.applyVelocity();
 	}

@@ -601,12 +601,12 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		// Exponential difficulty for each item collected
 
 
-		if (Math.pow(1.1, -0.002 * rb.getAmountCollected()) < r) {
+		if (Math.pow(1.1, -0.0002 * rb.getAmountCollected()) < r) {
 			makeDialog();
 		}
 
 		// Large items should be created less often later
-		if ((-2 * Math.pow(3, 0.2 * -(rb.getAmountCollected() + 20)) + 0.9) < r) {
+		if ((-2 * Math.pow(3, 2 * -(rb.getAmountCollected() + 20)) + 0.9) < r) {
 
 			Sysfile foo = new Sysfile(getBounds(), Sysfile.Size.L);
 			foo.setPosition(new Point2D.Double(
@@ -618,7 +618,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		}
 
 		// Smaller sysfiles are created more often the more itmes are collected
-		if (Math.pow(1.2, -0.002 * rb.getAmountCollected()) < r) {
+		if (Math.pow(1.2, -0.0002 * rb.getAmountCollected()) < r) {
 
 			Sysfile foo = new Sysfile(getBounds(), Sysfile.Size.M);
 			foo.setPosition(new Point2D.Double(
@@ -629,7 +629,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 			}
 		}
 
-		if (Math.pow(2.0, -0.002 * rb.getAmountCollected()) < r) {
+		if (Math.pow(2.0, -0.0002 * rb.getAmountCollected()) < r) {
 
 			Sysfile foo = new Sysfile(getBounds(), Sysfile.Size.S);
 			foo.setPosition(new Point2D.Double(
@@ -643,7 +643,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 
 
 		// Junk items are created regularly
-		if (Math.random() < 0.005) {
+		if (Math.random() < 0.01) {
 			Junk bar = new Junk(getBounds());
 			bar.setPosition(new Point2D.Double(
 					(int) (Math.random() * (getWidth() - bar.getAreaRect().width)),
@@ -693,7 +693,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		g.drawString("OUT_OF_CPU_ERROR", 50, 120);
 
 		g.drawString("Diagnostics", 50, 240);
-		g.drawString("Items Junked: " + ((RecycleBin) (objects.get(0))).getAmountCollected(), 50, 300);
+		g.drawString("Items Indiscriminately Junked: " + ((RecycleBin) (objects.get(0))).getAmountCollected(), 50, 300);
 		g.drawString("Time Elapsed: " + (timeGameEnded - timeGameStarted) / 1000000000.0 + " s", 50, 360);
 
 		g.drawString("Press <Esc> to power down.", 50, 400);

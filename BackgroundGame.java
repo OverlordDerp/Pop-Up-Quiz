@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import javax.swing.BoxLayout;
 import javax.swing.SwingConstants;
 import javax.swing.event.InternalFrameEvent;
@@ -72,11 +73,12 @@ public class BackgroundGame extends JPanel implements KeyListener {
 
 		GameObject.bgg = this;
 
-		sprites = new HashMap<>();
+		sprites = new HashMap<String, BufferedImage>();
 		try {
 			loadSprites();
 		} catch (IOException e) {
 			System.err.println(e);
+                        System.err.println("Image loading failed.");
 			System.exit(-1);
 		}
 
@@ -84,7 +86,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 			loadQuestions();
 		} catch (FileNotFoundException e) {
 			System.err.println(e);
-			System.err.println("The file is called QuestionBank.txt!");
+			System.err.println("Question loading failed. The file is called QuestionBank.txt!");
 			System.exit(-1);
 		} catch (IOException e) {
 			System.err.println(e);
@@ -268,11 +270,14 @@ public class BackgroundGame extends JPanel implements KeyListener {
 				}
 				e.consume();
 				break;
+                            /*
 			case KeyEvent.VK_WINDOWS:
 				if (!isStarted) {
 					startGame();
 				}
 				break;
+                                 * 
+                                 */
 		}
 	}
 
@@ -281,13 +286,13 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 * @throws IOException 
 	 */
 	private void loadSprites() throws IOException {
-		sprites.put("fullBin", ImageIO.read(new File("user-trash-full64.png")));
-		sprites.put("emptyBin", ImageIO.read(new File("user-trash64.png")));
-		sprites.put("sysfileLarge", ImageIO.read(new File("sysfile1-48.png")));
-		sprites.put("sysfileMedium", ImageIO.read(new File("sysfile2-32.png")));
-		sprites.put("sysfileSmall", ImageIO.read(new File("sysfile3-16.png")));
-		sprites.put("junk", ImageIO.read(new File("junk.png")));
-		sprites.put("grass", ImageIO.read(new File("grass.jpg")));
+		sprites.put("fullBin", ImageIO.read(this.getClass().getResourceAsStream("user-trash-full64.png")));
+		sprites.put("emptyBin", ImageIO.read(this.getClass().getResourceAsStream("user-trash64.png")));
+		sprites.put("sysfileLarge", ImageIO.read(this.getClass().getResourceAsStream("sysfile1-48.png")));
+		sprites.put("sysfileMedium", ImageIO.read(this.getClass().getResourceAsStream("sysfile2-32.png")));
+		sprites.put("sysfileSmall", ImageIO.read(this.getClass().getResourceAsStream("sysfile3-16.png")));
+		sprites.put("junk", ImageIO.read(this.getClass().getResourceAsStream("junk.png")));
+		sprites.put("grass", ImageIO.read(this.getClass().getResourceAsStream("grass.jpg")));
 	}
 
 	/**
@@ -474,7 +479,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 				+ " of pop-up as you do this.", 50, 500);
 		g.drawString("Serves you right for not being clean!!!", 50, 530);
 
-		g.drawString("PUSH START TO BEGIN_", 50, 600);
+		g.drawString("CLICK START TO BEGIN_", 50, 600);
 	}
 	/**
 	 * How many cycles of game logic to execute per second
@@ -728,9 +733,10 @@ public class BackgroundGame extends JPanel implements KeyListener {
 	 * @throws FileNotFoundException 
 	 */
 	private void loadQuestions() throws IOException, FileNotFoundException {
-		questions = new ArrayList<>();
+		questions = new ArrayList<Question>();
 
-		BufferedReader br = new BufferedReader(new FileReader("QuestionBank.txt"));
+		BufferedReader br = new BufferedReader(new InputStreamReader(
+                        this.getClass().getResourceAsStream("QuestionBank.txt")));
 
 		String question;
 		String[] choices = new String[4];

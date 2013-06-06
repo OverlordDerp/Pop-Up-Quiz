@@ -341,7 +341,7 @@ public class BackgroundGame extends JPanel implements KeyListener {
 		if (cpuUsage > 100) {
 			return 100;
 		}
-		return cpuUsage;
+		return cpuUsage; 
 	}
 
 	//ArrayList<Question> questions;
